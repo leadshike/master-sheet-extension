@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Master Sheet Extension</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #confirmationModal {
+        z-index: 9999;
+      }
+      #apiConnectorPage {
+        z-index: 9998;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <!-- Left Sidebar -->
+    <div
+      id="sidebar"
+      class="fixed inset-y-0 left-0 w-64 bg-white transform -translate-x-full transition-transform duration-200 ease-in-out z-50"
+    >
+      <div class="flex justify-between items-center p-4 border-b">
+        <div class="text-lg">Home</div>
+        <button onclick="toggleSidebar()" class="text-gray-500">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="p-4">
+        <div class="space-y-4">
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-bolt"></i>
+            <span>New request</span>
+          </div>
+          <div class="flex items-center space-x-2 text-gray-400">
+            <i class="fas fa-sync"></i>
+            <span>Refresh current sheet</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-user"></i>
+            <span>Account settings</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-book"></i>
+            <span>Documentation</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-table"></i>
+            <span>Showcase data</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-shield-alt"></i>
+            <span>Privacy & Security</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-comment"></i>
+            <span>Send feedback</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-question-circle"></i>
+            <span>Contact support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="min-h-screen">
+      <!-- Header -->
+      <header
+        class="bg-green-500 text-white p-4 flex justify-between items-center"
+      >
+        <button onclick="toggleSidebar()" class="text-xl">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="text-lg">Home</div>
+        <button onclick="toggleHelp()" class="text-xl">
+          <i class="fas fa-question-circle"></i>
+        </button>
+      </header>
+
+      <!-- Help Modal -->
+      <div
+        id="helpModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-lg w-80 p-4">
+          <h2 class="text-xl mb-4">Help</h2>
+          <div class="space-y-4">
+            <button
+              class="flex items-center space-x-2 w-full p-2 rounded hover:bg-gray-100"
+            >
+              <i class="fas fa-book text-green-500"></i>
+              <span>Documentation</span>
+            </button>
+            <button
+              class="flex items-center space-x-2 w-full p-2 rounded hover:bg-gray-100"
+            >
+              <i class="fas fa-question-circle text-green-500"></i>
+              <span>Contact support</span>
+            </button>
+          </div>
+          <button
+            onclick="toggleHelp()"
+            class="mt-4 w-full bg-green-500 text-white py-2 rounded"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+
+      <!-- Confirmation Modal -->
+      <div
+        id="confirmationModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
+      >
+        <div class="bg-white rounded-lg w-80 p-4 relative">
+          <h2 class="text-xl mb-4">Run Request?</h2>
+          <div class="mb-4">
+            <div class="flex items-center space-x-2 text-gray-600">
+              <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+              <p>
+                The target sheet will be overwritten with the results of this
+                API Request.
+              </p>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <button
+              onclick="executeRequest()"
+              class="flex-1 bg-green-500 text-white py-2 rounded"
+            >
+              Run
+            </button>
+            <button
+              onclick="hideConfirmationModal()"
+              class="flex-1 bg-gray-200 text-gray-700 py-2 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="p-4">
+        <div class="mb-4">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search data sources..."
+              class="w-full p-2 border rounded-lg pl-10"
+            />
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+
+        <!-- AI Integrations Section -->
+        <!-- <div class="mb-4">
+                <button onclick="toggleSection('aiIntegrations')" class="flex justify-between items-center w-full py-2">
+                    <span>AI Integrations</span>
+                    <i id="aiIntegrationsIcon" class="fas fa-chevron-down transform transition-transform duration-200"></i>
+                </button>
+                <div id="aiIntegrationsContent" class="hidden space-y-2 mt-2">
+                    <button onclick="showAIDetails('contentAI')" class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-brain text-purple-500"></i>
+                        <span>CONTENT AI</span>
+                    </button>
+                    <button onclick="showAIDetails('dashboardAI')" class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-chart-line text-blue-500"></i>
+                        <span>DASHBOARD AI</span>
+                    </button>
+                    <button onclick="showAIDetails('kpiAI')" class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-calculator text-green-500"></i>
+                        <span>KPI FORMULA AI</span>
+                    </button>
+                    <button onclick="showAIDetails('extractAI')" class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-filter text-yellow-500"></i>
+                        <span>EXTRACT AI</span>
+                    </button>
+                    <button onclick="showAIDetails('nlpAI')" class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-language text-red-500"></i>
+                        <span>AI FILTER USING NLP</span>
+                    </button>
+                    <button onclick="showAIDetails('analyzeAI')" class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-microscope text-indigo-500"></i>
+                        <span>AI ANALYZE</span>
+                    </button>
+                </div>
+            </div> -->
+
+        <!-- Data Enrichment Section -->
+        <div class="mb-4">
+          <button
+            onclick="toggleSection('dataEnrichment')"
+            class="flex justify-between items-center w-full py-2"
+          >
+            <span>Data Enrichment</span>
+            <i
+              id="dataEnrichmentIcon"
+              class="fas fa-chevron-down transform transition-transform duration-200"
+            ></i>
+          </button>
+          <div id="dataEnrichmentContent" class="hidden space-y-2 mt-2">
+            <button
+              onclick="showAPIConnector()"
+              class="w-full text-left p-2 bg-purple-100 rounded flex items-center space-x-2"
+            >
+              <i class="fas fa-plug text-purple-500"></i>
+              <span>Universal API connector</span>
+            </button>
+            <button
+              onclick="showDataIntegrationDialog()"
+              class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm"
+            >
+              <i class="fas fa-database text-blue-500"></i>
+              <span>Enrichment Workflows</span>
+            </button>
+            <button
+              class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm"
+            >
+              <i class="fas fa-user-cog text-green-500"></i>
+              <span>Hyper Personalization</span>
+            </button>
+            <button
+              onclick="showEnrichmentFormulasDialog()"
+              class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm"
+            >
+              <i class="fas fa-calculator text-orange-500"></i>
+              <span>Enrichment Recipes</span>
+            </button>
+          </div>
+        </div>
+        <!-- Scrappers Section -->
+        <div class="mb-4">
+          <button
+            onclick="toggleSection('scrapperIntegrations')"
+            class="flex justify-between items-center w-full py-2"
+          >
+            <span>Scrappers</span>
+            <i
+              id="scrapperIntegrationsIcon"
+              class="fas fa-chevron-down transform transition-transform duration-200"
+            ></i>
+          </button>
+          <div id="scrapperIntegrationsContent" class="hidden space-y-2 mt-2">
+            <button
+              onclick="showAIDetails('contentAI')"
+              class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm"
+            >
+              <i class="fas fa-brain text-purple-500"></i>
+              <span>Google Map Scraper</span>
+            </button>
+            <button
+              onclick="showAIDetails('dashboardAI')"
+              class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm"
+            >
+              <i class="fas fa-chart-line text-blue-500"></i>
+              <span>Linkedin Profile Scraper</span>
+            </button>
+            <button
+              onclick="showAIDetails('kpiAI')"
+              class="flex items-center space-x-2 w-full p-3 bg-white rounded-lg shadow-sm"
+            >
+              <i class="fas fa-calculator text-green-500"></i>
+              <span>Linkedin Like Scraper</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Connector Page -->
+      <div
+        id="apiConnectorPage"
+        class="hidden fixed inset-0 bg-white z-50 flex flex-col"
+      >
+        <!-- Main Header -->
+        <header
+          class="bg-green-500 text-white p-4 flex items-center justify-between"
+        >
+          <div class="flex items-center">
+            <button onclick="hideAPIConnector()" class="mr-4 text-sm">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="text-base">Universal API Connector</div>
+          </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="bg-gray-100 flex border-b">
+          <button
+            onclick="switchConnectorTab('manage')"
+            class="tab-button px-6 py-3 hover:bg-purple-500 hover:text-white"
+            data-tab="manage"
+          >
+            Manage
+          </button>
+          <button
+            onclick="switchConnectorTab('import')"
+            class="tab-button px-6 py-3 hover:bg-purple-500 hover:text-white tab-active"
+            data-tab="import"
+          >
+            Import
+          </button>
+          <button
+            onclick="switchConnectorTab('schedule')"
+            class="tab-button px-6 py-3 hover:bg-purple-500 hover:text-white"
+            data-tab="schedule"
+          >
+            Schedule
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+          <!-- Manage View -->
+          <div id="connectorManageView" class="p-4 hidden">
+            <button
+              class="w-full bg-purple-100 text-purple-700 py-2 px-4 rounded-lg mb-3 text-sm"
+            >
+              Run All Requests
+            </button>
+            <h2 class="text-base font-medium mb-3">Saved Requests:</h2>
+            <div id="savedRequestsList" class="space-y-2">
+              <!-- Saved requests will be populated here -->
+            </div>
+          </div>
+
+          <!-- Import View -->
+          <div id="connectorImportView" class="p-4">
+            <form id="apiForm" onsubmit="handleFormSubmit(event)">
+              <!-- Method Selection -->
+              <div class="mb-3">
+                <label class="flex items-center text-xs font-medium mb-2">
+                  Method
+                  <i
+                    class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                    title="Select HTTP method for your request"
+                  ></i>
+                </label>
+                <select
+                  id="apiMethod"
+                  class="w-full p-2 border rounded text-sm"
+                >
+                  <option>GET</option>
+                  <option>POST</option>
+                  <option>PUT</option>
+                  <option>PATCH</option>
+                  <option>DELETE</option>
+                </select>
+              </div>
+
+              <!-- API URL Path -->
+              <div class="mb-3">
+                <label class="flex items-center text-xs font-medium mb-2">
+                  API URL Path
+                  <span class="text-red-500 ml-1 text-xs">*</span>
+                  <i
+                    class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                    title="Enter the API endpoint URL"
+                  ></i>
+                </label>
+                <textarea
+                  id="apiUrl"
+                  class="w-full p-2 border rounded text-sm"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+
+              <!-- Headers Section -->
+              <div class="mb-3 border rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onclick="toggleAPISection('headers')"
+                  class="flex justify-between items-center w-full p-3 bg-gray-50 text-sm"
+                >
+                  <div class="flex items-center">
+                    <span class="font-medium text-sm">Headers</span>
+                    <i
+                      class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                      title="Add request headers"
+                    ></i>
+                  </div>
+                  <i id="headersIcon" class="fas fa-chevron-down text-sm"></i>
+                </button>
+                <div id="headersContent" class="hidden p-3">
+                  <div class="flex gap-1 mb-2">
+                    <input
+                      type="text"
+                      placeholder="Key"
+                      class="w-2/5 p-1 border rounded text-xs"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Value"
+                      class="w-2/5 p-1 border rounded text-xs"
+                    />
+                    <button type="button" class="text-red-500 px-1 text-sm">
+                      ✕
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onclick="addNewHeader()"
+                    class="text-blue-500 text-xs mt-1"
+                  >
+                    + Add New Header
+                  </button>
+                </div>
+              </div>
+
+              <!-- Pagination Section -->
+              <div class="mb-3 border rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onclick="toggleAPISection('pagination')"
+                  class="flex justify-between items-center w-full p-3 bg-gray-50 text-sm"
+                >
+                  <div class="flex items-center">
+                    <span class="font-medium text-sm">Pagination</span>
+                    <i
+                      class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                      title="Configure pagination settings"
+                    ></i>
+                  </div>
+                  <i
+                    id="paginationIcon"
+                    class="fas fa-chevron-down text-sm"
+                  ></i>
+                </button>
+                <div id="paginationContent" class="hidden p-3">
+                  <select
+                    id="paginationType"
+                    class="w-full p-2 border rounded text-sm"
+                  >
+                    <option>None</option>
+                    <option>Page Number</option>
+                    <option>Offset Limit</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Settings Section -->
+              <div class="mb-3 border rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onclick="toggleAPISection('settings')"
+                  class="flex justify-between items-center w-full p-3 bg-gray-50 text-sm"
+                >
+                  <div class="flex items-center">
+                    <span class="font-medium text-sm">Settings</span>
+                    <i
+                      class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                      title="Configure additional settings"
+                    ></i>
+                  </div>
+                  <i id="settingsIcon" class="fas fa-chevron-down text-sm"></i>
+                </button>
+                <div id="settingsContent" class="hidden p-3">
+                  <div class="space-y-3">
+                    <div class="flex items-center text-sm">
+                      <input type="checkbox" id="appendMode" class="mr-2" />
+                      <label for="appendMode" class="text-sm"
+                        >Append Mode</label
+                      >
+                      <i
+                        class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                        title="Append new data to existing sheet content"
+                      ></i>
+                    </div>
+                    <div class="flex items-center text-sm">
+                      <input
+                        type="checkbox"
+                        id="includeDateTime"
+                        class="mr-2"
+                      />
+                      <label for="includeDateTime" class="text-sm"
+                        >Include Date & Time</label
+                      >
+                      <i
+                        class="fas fa-info-circle ml-2 text-gray-400 text-xs"
+                        title="Add timestamp to each row"
+                      ></i>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                      <span class="text-sm">Delay</span>
+                      <input
+                        type="number"
+                        id="delaySeconds"
+                        class="w-16 p-1 border rounded text-sm"
+                        value="2.0"
+                      />
+                      <span class="text-sm">seconds after</span>
+                      <input
+                        type="number"
+                        id="delayApiCalls"
+                        class="w-16 p-1 border rounded text-sm"
+                        value="1"
+                      />
+                      <span class="text-sm">API call(s)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons and Info Text -->
+              <div class="space-y-3">
+                <div class="flex gap-2">
+                  <button
+                    type="button"
+                    onclick="handlePreviewClick()"
+                    class="flex-1 bg-purple-100 text-purple-700 py-2 rounded hover:bg-purple-200 text-sm"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    type="button"
+                    onclick="handleSaveClick()"
+                    class="flex-1 bg-purple-100 text-purple-700 py-2 rounded hover:bg-purple-200 text-sm"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    id="runButton"
+                    onclick="handleRunClick()"
+                    class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 text-sm"
+                  >
+                    Run
+                  </button>
+                </div>
+                <p class="text-xs text-gray-600">
+                  Open the sheet you'd like this output written to. Your active
+                  sheet will be overwritten with the output.
+                </p>
+              </div>
+            </form>
+          </div>
+
+          <!-- Schedule View -->
+          <div id="connectorScheduleView" class="p-4 hidden">
+            <!-- Schedule content will be added later -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Request Modal -->
+      <div
+        id="saveModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
+      >
+        <div class="bg-white rounded-lg w-80 p-4">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="text-base font-medium">Save Request</h2>
+            <button onclick="hideSaveModal()" class="text-gray-500 text-sm">
+              &times;
+            </button>
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium mb-2">Request Name</label>
+            <input
+              type="text"
+              id="requestName"
+              class="w-full p-2 border rounded text-sm"
+            />
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button
+              onclick="saveRequest()"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm"
+            >
+              Save
+            </button>
+            <button
+              onclick="hideSaveModal()"
+              class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Toggle functions for UI elements
+      function toggleSidebar() {
+        document
+          .getElementById("sidebar")
+          .classList.toggle("-translate-x-full");
+      }
+
+      function toggleHelp() {
+        document.getElementById("helpModal").classList.toggle("hidden");
+      }
+
+      function toggleSection(section) {
+        const content = document.getElementById(section + "Content");
+        const icon = document.getElementById(section + "Icon");
+        content.classList.toggle("hidden");
+        icon.classList.toggle("rotate-180");
+      }
+
+      function toggleAPISection(section) {
+        const content = document.getElementById(section + "Content");
+        const icon = document.getElementById(section + "Icon");
+        content.classList.toggle("hidden");
+        icon.classList.toggle("rotate-180");
+      }
+
+      // Navigation functions
+      function showAPIConnector() {
+        document.getElementById("apiConnectorPage").classList.remove("hidden");
+      }
+
+      function hideAPIConnector() {
+        document.getElementById("apiConnectorPage").classList.add("hidden");
+      }
+
+      function showConfirmationModal() {
+        const modal = document.getElementById("confirmationModal");
+        modal.style.display = "flex";
+        modal.classList.remove("hidden");
+      }
+
+      function hideConfirmationModal() {
+        const modal = document.getElementById("confirmationModal");
+        modal.style.display = "none";
+        modal.classList.add("hidden");
+      }
+
+      // Header management
+      function addNewHeader() {
+        const headersContent = document.getElementById("headersContent");
+        const newHeader = document.createElement("div");
+        newHeader.className = "flex gap-1 mb-2";
+        newHeader.innerHTML = `
+            <input type="text" placeholder="Key" class="w-2/5 p-1 border rounded text-xs">
+            <input type="text" placeholder="Value" class="w-2/5 p-1 border rounded text-xs">
+            <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-1 text-sm">✕</button>
+        `;
+        headersContent.insertBefore(newHeader, headersContent.lastElementChild);
+      }
+
+      // Form handling
+      function handleRunClick() {
+        const apiUrl = document.getElementById("apiUrl").value.trim();
+
+        if (!apiUrl) {
+          alert("API URL is required");
+          return;
+        }
+
+        showConfirmationModal();
+      }
+
+      function handleFormSubmit(event) {
+        event.preventDefault();
+      }
+
+// Corrected getHeadersData function
+function getHeadersData() {
+  const headerRows = document.querySelectorAll(
+    "#headersContent .flex.gap-1:not(:last-child)"
+  );
+  const headers = {};
+
+  headerRows.forEach((row) => {
+    const keyInput = row.querySelector("input:first-child");
+    const valueInput = row.querySelector("input:last-of-type");
+    if (keyInput && valueInput && keyInput.value && valueInput.value) {
+      headers[keyInput.value] = valueInput.value;
+    }
+  });
+
+  console.log("Headers collected:", headers); // For debugging
+  return headers;
+}
+
+      function getPaginationData() {
+        const paginationSelect = document.querySelector("#paginationType");
+        return paginationSelect ? paginationSelect.value : "None";
+      }
+
+      function handlePreviewClick() {
+        const apiUrl = document.getElementById("apiUrl").value.trim();
+
+        if (!apiUrl) {
+          alert("Please enter an API URL first");
+          return;
+        }
+
+        // Set the endpoint first
+        google.script.run
+          .withSuccessHandler(() => {
+            // Then open the preview popup
+            google.script.run.openPreviewPopup();
+          })
+          .withFailureHandler((error) => {
+            alert("Error: " + error.message);
+          })
+          .setCurrentEndpoint(apiUrl);
+      }
+
+      document.getElementById("apiUrl").addEventListener("input", function () {
+        const previewButton = document.getElementById("previewButton");
+        previewButton.disabled = !this.value.trim();
+      });
+      // Execute API request
+      function executeRequest() {
+        console.log("Starting API request execution...");
+
+        // Get form values
+        const apiUrl = document.getElementById("apiUrl").value;
+        const method = document.getElementById("apiMethod").value;
+        const headers = getHeadersData();
+        const pagination = getPaginationData();
+
+        // Get settings
+        const settings = {
+          appendMode: document.getElementById("appendMode")?.checked || false,
+          includeDateTime:
+            document.getElementById("includeDateTime")?.checked || false,
+        };
+
+        // Log request details
+        console.log("Request Parameters:", {
+          url: apiUrl,
+          method: method,
+          headers: headers,
+          pagination: pagination,
+          settings: settings,
+        });
+
+        hideConfirmationModal();
+
+        // Show loading state - updated button selector
+        const runButton = document.getElementById("runButton");
+        const originalText = runButton.textContent;
+        runButton.textContent = "Processing...";
+        runButton.disabled = true;
+
+        // Add loading indicator
+        const loadingIndicator = document.createElement("div");
+        loadingIndicator.id = "loadingIndicator";
+        loadingIndicator.className =
+          "fixed top-0 left-0 w-full bg-green-500 text-white text-center py-2 z-[9999]";
+        loadingIndicator.textContent = "Processing API Request...";
+        document.body.prepend(loadingIndicator);
+
+        // Call Apps Script function
+        google.script.run
+          .withSuccessHandler((response) => {
+            console.log("Success response:", response);
+
+            // Remove loading indicator
+            const indicator = document.getElementById("loadingIndicator");
+            if (indicator) indicator.remove();
+
+            // Reset button state
+            runButton.textContent = originalText;
+            runButton.disabled = false;
+
+            // Clear form
+            document.getElementById("apiUrl").value = "";
+            document.getElementById("apiMethod").value = "GET";
+            document
+              .querySelectorAll("#headersContent .flex.gap-2:not(:last-child)")
+              .forEach((row) => row.remove());
+            document.getElementById("paginationType").value = "None";
+
+            // Reset settings
+            if (document.getElementById("appendMode"))
+              document.getElementById("appendMode").checked = false;
+            if (document.getElementById("includeDateTime"))
+              document.getElementById("includeDateTime").checked = false;
+
+            // Hide API connector page
+            hideAPIConnector();
+
+            // Show success message
+            google.script.run.showToast(
+              "API request completed successfully",
+              "success"
+            );
+          })
+          .withFailureHandler((error) => {
+            console.error("Error in API request:", error);
+
+            // Remove loading indicator
+            const indicator = document.getElementById("loadingIndicator");
+            if (indicator) indicator.remove();
+
+            // Reset button state
+            runButton.textContent = originalText;
+            runButton.disabled = false;
+
+            // Show error message
+            google.script.run.showToast(
+              error.message || "Error processing API request",
+              "error"
+            );
+          })
+          .executeAPIRequest(apiUrl, method, headers, pagination, settings);
+
+        console.log("Request sent to Apps Script");
+      }
+      // AI Section handling
+      function showAIDetails(aiType) {
+        // Placeholder for AI integration details
+        console.log("Showing details for:", aiType);
+        // You can implement specific AI functionality here
+      }
+
+      // API Connector Tab Management
+      function switchConnectorTab(tabName) {
+        // Hide all views first
+        ["manage", "import", "schedule"].forEach((tab) => {
+          document
+            .getElementById(
+              `connector${tab.charAt(0).toUpperCase() + tab.slice(1)}View`
+            )
+            .classList.add("hidden");
+        });
+
+        // Show selected view
+        const selectedView = document.getElementById(
+          `connector${tabName.charAt(0).toUpperCase() + tabName.slice(1)}View`
+        );
+        selectedView.classList.remove("hidden");
+
+        // Update tab styling
+        document.querySelectorAll(".tab-button").forEach((tab) => {
+          tab.classList.remove("tab-active", "bg-purple-500", "text-white");
+        });
+        const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+        activeTab.classList.add("tab-active", "bg-purple-500", "text-white");
+
+        if (tabName === "manage") {
+          loadSavedRequests();
+        }
+      }
+
+      // Save Request Functions
+      function handleSaveClick() {
+        const apiUrl = document.getElementById("apiUrl").value.trim();
+        if (!apiUrl) {
+          alert("Please enter an API URL first");
+          return;
+        }
+        document.getElementById("saveModal").classList.remove("hidden");
+      }
+
+      function hideSaveModal() {
+        document.getElementById("saveModal").classList.add("hidden");
+      }
+
+      function saveRequest() {
+        const requestName = document.getElementById("requestName").value.trim();
+        if (!requestName) {
+          alert("Please enter a request name");
+          return;
+        }
+
+        const requestData = {
+          name: requestName,
+          method: document.getElementById("apiMethod").value,
+          url: document.getElementById("apiUrl").value,
+          headers: getHeadersData(),
+          pagination: document.getElementById("paginationType").value,
+          settings: {
+            appendMode: document.getElementById("appendMode").checked,
+            includeDateTime: document.getElementById("includeDateTime").checked,
+            delaySeconds:
+              parseFloat(document.getElementById("delaySeconds").value) || 2.0,
+            delayApiCalls:
+              parseInt(document.getElementById("delayApiCalls").value) || 1,
+          },
+        };
+
+        google.script.run
+          .withSuccessHandler(() => {
+            hideSaveModal();
+            switchConnectorTab("manage");
+            google.script.run.showToast(
+              "Request saved successfully",
+              "success"
+            );
+          })
+          .withFailureHandler((error) => {
+            alert("Error saving request: " + error.message);
+          })
+          .saveRequest(requestName, requestData);
+      }
+
+      // Manage Tab Functions
+      function loadSavedRequests() {
+        google.script.run
+          .withSuccessHandler(displaySavedRequests)
+          .withFailureHandler((error) => {
+            alert("Error loading requests: " + error.message);
+          })
+          .getSavedRequests();
+      }
+
+      function displaySavedRequests(requests) {
+        const container = document.getElementById("savedRequestsList");
+        container.innerHTML = "";
+
+        Object.entries(requests).forEach(([name, data]) => {
+          const requestDiv = document.createElement("div");
+          requestDiv.className =
+            "flex justify-between items-center p-3 hover:bg-gray-50 border-b";
+          requestDiv.innerHTML = `
+                <span class="cursor-pointer" onclick="loadRequest('${name}')">${name}</span>
+                <button onclick="runSavedRequest('${name}')" 
+                        class="bg-purple-100 text-purple-700 px-4 py-1 rounded hover:bg-purple-200">
+                    Run
+                </button>
+            `;
+          container.appendChild(requestDiv);
+        });
+      }
+
+      function loadRequest(name) {
+        google.script.run
+          .withSuccessHandler(populateForm)
+          .withFailureHandler((error) => {
+            alert("Error loading request: " + error.message);
+          })
+          .getRequest(name);
+      }
+
+      function populateForm(requestData) {
+        // Populate main fields
+        document.getElementById("apiMethod").value = requestData.method;
+        document.getElementById("apiUrl").value = requestData.url;
+        document.getElementById("paginationType").value =
+          requestData.pagination;
+
+        // Populate headers
+        const headersContent = document.getElementById("headersContent");
+        headersContent.innerHTML = ""; // Clear existing headers
+        if (requestData.headers) {
+          Object.entries(requestData.headers).forEach(([key, value]) => {
+            const headerDiv = document.createElement("div");
+            headerDiv.className = "flex gap-2 mb-2";
+            headerDiv.innerHTML = `
+                    <input type="text" value="${key}" placeholder="Key" class="flex-1 p-2 border rounded">
+                    <input type="text" value="${value}" placeholder="Value" class="flex-1 p-2 border rounded">
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2">✕</button>
+                `;
+            headersContent.appendChild(headerDiv);
+          });
+        }
+        // Add the "Add New Header" button
+        const addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.onclick = addNewHeader;
+        addButton.className = "text-blue-500 text-sm";
+        addButton.textContent = "+ Add New Header";
+        headersContent.appendChild(addButton);
+
+        // Populate settings
+        if (requestData.settings) {
+          document.getElementById("appendMode").checked =
+            requestData.settings.appendMode;
+          document.getElementById("includeDateTime").checked =
+            requestData.settings.includeDateTime;
+          document.getElementById("delaySeconds").value =
+            requestData.settings.delaySeconds;
+          document.getElementById("delayApiCalls").value =
+            requestData.settings.delayApiCalls;
+        }
+
+        switchConnectorTab("import");
+      }
+
+      function runSavedRequest(name) {
+        google.script.run
+          .withSuccessHandler(() => {
+            google.script.run.showToast(
+              "Request executed successfully",
+              "success"
+            );
+          })
+          .withFailureHandler((error) => {
+            alert("Error executing request: " + error.message);
+          })
+          .executeSavedRequest(name);
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        // Start on import tab for API Connector
+        if (
+          document.getElementById("apiConnectorPage") &&
+          !document
+            .getElementById("apiConnectorPage")
+            .classList.contains("hidden")
+        ) {
+          switchConnectorTab("import");
+        }
+      });
+
+      function showDataIntegrationDialog() {
+        google.script.run.openDataIntegrationPopup();
+      }
+      function showEnrichmentFormulasDialog() {
+        google.script.run.openEnrichmentFormulasPopup();
+      }
+    </script>
+  </body>
+</html>
