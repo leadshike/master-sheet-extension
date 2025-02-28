@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Data Integration</title>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <style>
+       .workflow-card {
+           transition: all 0.3s ease;
+       }
+       .workflow-card:hover {
+           transform: translateY(-2px);
+       }
+       .hidden {
+           display: none !important;
+       }
+   </style>
+</head>
+<body class="bg-gray-100">
+   <div id="mainPage" class="p-4">
+       <div class="mb-6 text-center">
+           <div class="inline-flex space-x-4 bg-white p-3 rounded-lg shadow">
+               <label class="flex items-center space-x-2 cursor-pointer">
+                   <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-500" value="Email" onchange="filterWorkflows()">
+                   <span class="text-sm">Email</span>
+               </label>
+               <label class="flex items-center space-x-2 cursor-pointer">
+                   <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-500" value="LinkedIn URL" onchange="filterWorkflows()">
+                   <span class="text-sm">LinkedIn URL</span>
+               </label>
+               <label class="flex items-center space-x-2 cursor-pointer">
+                   <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-500" value="Website" onchange="filterWorkflows()">
+                   <span class="text-sm">Website</span>
+               </label>
+           </div>
+       </div>
+
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="workflowsGrid"></div>
+   </div>
+
+   <div id="workflowDetail" class="hidden h-full overflow-auto">
+       <div class="bg-white p-3 shadow-md sticky top-0">
+           <div class="flex items-center">
+               <button onclick="showMainPage()" class="mr-3">
+                   <i class="fas fa-arrow-left text-gray-600"></i>
+               </button>
+               <h2 class="text-base font-medium" id="workflowTitle"></h2>
+           </div>
+       </div>
+
+       <div class="p-4">
+           <div class="bg-white rounded-lg p-4 shadow-md">
+               <div id="workflowProcessSteps" class="flex flex-wrap items-center justify-center gap-3"></div>
+
+               <div class="mt-6 p-3 bg-gray-50 rounded-lg">
+                   <h3 class="text-sm font-medium mb-2">How it works:</h3>
+                   <p id="workflowDescription" class="text-sm text-gray-600"></p>
+               </div>
+
+               <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                   <div class="flex items-center justify-between mb-2">
+                       <h3 class="text-sm font-medium">Example Output:</h3>
+                       <button onclick="copyOutput()" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
+                           <i class="fas fa-copy"></i>
+                           <span>Copy</span>
+                       </button>
+                   </div>
+                   <pre id="workflowOutput" class="text-sm whitespace-pre-wrap text-gray-700 mt-2 p-3 bg-white rounded border"></pre>
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <script>
+       const workflows = [
+   {
+       id: 2,
+       name: "Email to LinkedIn Profile",
+       desc: "Takes an email as input and retrieves the associated LinkedIn profile, providing details such as name, position, and company.",
+       input: ["Email"],
+       output: "LinkedIn Profile",
+       process: [
+           { icon: "fas fa-envelope", text: "Email Input" },
+           { icon: "fas fa-search", text: "Profile Search" },
+           { icon: "fab fa-linkedin", text: "LinkedIn Profile" }
+       ],
+       exampleOutput: `LinkedIn Profile Details:
+Name: John Smith
+Position: Senior Product Manager
+Company: TechCorp Inc.
+Location: San Francisco Bay Area
+Experience: 8+ years
+Skills: Product Strategy, Agile, Technical Leadership`
+   },
+   {
+       id: 3,
+       name: "LinkedIn Profile to Email Verification",
+       desc: "Uses a LinkedIn profile URL to fetch the associated email and verify its validity.",
+       input: ["LinkedIn URL"],
+       output: "Verified Email",
+       process: [
+           { icon: "fab fa-linkedin", text: "LinkedIn Profile" },
+           { icon: "fas fa-envelope-open", text: "Email Discovery" },
+           { icon: "fas fa-check-circle", text: "Verification" }
+       ],
+       exampleOutput: `Email Verification Results:
+Primary Email: john.smith@techcorp.com
+Status: Valid
+Confidence Score: 95%
+Last Verified: 2024-02-11`
+   },
+   {
+       id: 4,
+       name: "Email to LinkedIn Connection Message",
+       desc: "Generates a personalized LinkedIn connection request message based on the user's LinkedIn profile.",
+       input: ["Email", "LinkedIn URL"],
+       output: "LinkedIn Connection Message",
+       process: [
+           { icon: "fas fa-envelope", text: "Email Analysis" },
+           { icon: "fab fa-linkedin", text: "Profile Analysis" },
+           { icon: "fas fa-user-plus", text: "Connection Strategy" },
+           { icon: "fas fa-pen", text: "Message Generation" }
+       ],
+       exampleOutput: `Hi [Name],
+
+I came across your profile and was impressed by your work in [Industry/Field]. Your experience with [Specific Project/Technology] particularly caught my attention.
+
+I'd love to connect and learn more about your insights in [Specific Area].
+
+Best regards,
+[Your Name]`
+   },
+   {
+       id: 5,
+       name: "LinkedIn Profile to Outreach Email",
+       desc: "Analyzes the LinkedIn profile and generates a personalized outreach email tailored to the person's professional background.",
+       input: ["LinkedIn URL"],
+       output: "Personalized Outreach Email",
+       process: [
+           { icon: "fab fa-linkedin", text: "Profile Analysis" },
+           { icon: "fas fa-brain", text: "Content Analysis" },
+           { icon: "fas fa-envelope", text: "Email Crafting" }
+       ],
+       exampleOutput: `Subject: Your Insights on [Industry/Technology]
+
+Dear [Name],
+
+I recently came across your LinkedIn profile and was impressed by your work at [Company], particularly your contributions to [Specific Project/Initiative].
+
+Given your expertise in [Specific Area], I'd love to get your thoughts on [Related Topic/Challenge].
+
+Would you be open to a brief conversation next week?
+
+Best regards,
+[Your Name]`
+   },
+   {
+       id: 6,
+       name: "Email to Social Insights",
+       desc: "Uses an email to gather insights about the person's LinkedIn activity, engagement, and interests.",
+       input: ["Email", "LinkedIn URL"],
+       output: "Social Insights Report",
+       process: [
+           { icon: "fas fa-envelope", text: "Email Input" },
+           { icon: "fab fa-linkedin", text: "LinkedIn Analysis" },
+           { icon: "fas fa-chart-line", text: "Activity Tracking" },
+           { icon: "fas fa-file-alt", text: "Report Generation" }
+       ],
+       exampleOutput: `Social Insights Report:
+Activity Level: High
+Recent Posts: 12 (last 30 days)
+Content Focus: AI, Machine Learning, Data Science
+Engagement Rate: 8.5%
+Key Interests: Technology, Innovation, Leadership
+Recent Achievements: Speaker at TechConf 2024
+Network Growth: +15% (last 3 months)`
+   },
+   {
+       id: 7,
+       name: "Website to Company Insights",
+       desc: "Extracts insights from a website, such as company details, industry trends, and key personnel, and maps them to LinkedIn data.",
+       input: ["Website"],
+       output: "Company Insights",
+       process: [
+           { icon: "fas fa-globe", text: "Website Scraping" },
+           { icon: "fas fa-building", text: "Company Analysis" },
+           { icon: "fas fa-users", text: "Team Analysis" },
+           { icon: "fas fa-chart-pie", text: "Insights Generation" }
+       ],
+       exampleOutput: `Company Analysis Report:
+Company: TechCorp Inc.
+Industry: Enterprise Software
+Employee Count: 500-1000
+Key Products: AI Platform, Data Analytics Suite
+Recent News: Series C Funding ($50M)
+Key Technologies: Machine Learning, Cloud Computing
+Growth Rate: 125% YoY
+Key Personnel: 5 C-level, 12 VPs
+Market Position: Leader in AI Solutions`
+   },
+   {
+       id: 8,
+       name: "Website and Email to Lead Generation",
+       desc: "Uses both website and email data to identify key contacts and generate potential LinkedIn leads.",
+       input: ["Email", "Website"],
+       output: "LinkedIn Leads",
+       process: [
+           { icon: "fas fa-globe", text: "Website Analysis" },
+           { icon: "fas fa-envelope", text: "Email Verification" },
+           { icon: "fas fa-user-tie", text: "Contact Identification" },
+           { icon: "fas fa-list", text: "Lead List Generation" }
+       ],
+       exampleOutput: `Lead Generation Results:
+1. John Smith
+  Position: CTO
+  Match Score: 95%
+  Contact: john.s@company.com
+  Decision Maker: Yes
+  
+2. Sarah Johnson
+  Position: Head of Innovation
+  Match Score: 92%
+  Contact: s.johnson@company.com
+  Decision Maker: Yes
+  
+3. Michael Brown
+  Position: Product Director
+  Match Score: 88%
+  Contact: m.brown@company.com
+  Decision Maker: Yes`
+   },
+   {
+       id: 9,
+       name: "Website to Competitor Analysis",
+       desc: "Analyzes a given website and its LinkedIn presence to generate a report on competitors and industry benchmarks.",
+       input: ["Website", "LinkedIn URL"],
+       output: "Competitor Analysis Report",
+       process: [
+           { icon: "fas fa-globe", text: "Website Analysis" },
+           { icon: "fab fa-linkedin", text: "LinkedIn Research" },
+           { icon: "fas fa-chart-bar", text: "Market Analysis" },
+           { icon: "fas fa-file-alt", text: "Report Generation" }
+       ],
+       exampleOutput: `Competitor Analysis Report:
+Industry Position:
+- Market Share: 15%
+- Growth Rate: 85% YoY
+- Innovation Score: 8.5/10
+
+Key Competitors:
+1. CompetitorA
+  - Market Share: 25%
+  - Strengths: Product Innovation
+  - Weaknesses: Customer Support
+
+2. CompetitorB
+  - Market Share: 20%
+  - Strengths: Global Presence
+  - Weaknesses: Technical Capability
+
+Competitive Advantages:
+- Unique Technology Stack
+- Strong Partner Network
+- Industry Expertise`
+   }
+];
+
+       function createWorkflowCard(workflow) {
+           const inputBadges = workflow.input.map(input => 
+               `<span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">${input}</span>`
+           ).join('');
+
+           return `
+               <div class="workflow-card bg-white rounded-lg shadow-md p-4 h-48 flex flex-col justify-between" data-inputs="${workflow.input.join(',')}">
+                   <div>
+                       <div class="flex items-center justify-between mb-2">
+                           <h3 class="text-base font-medium">${workflow.name}</h3>
+                           <div class="flex gap-1 flex-wrap">
+                               ${inputBadges}
+                           </div>
+                       </div>
+                       <p class="text-sm text-gray-600 line-clamp-3">${workflow.desc}</p>
+                   </div>
+                   <button onclick="showWorkflowDetail(${workflow.id})" 
+                           class="w-full bg-blue-500 text-white py-1.5 text-sm rounded hover:bg-blue-600 transition-colors mt-2">
+                       View Workflow
+                   </button>
+               </div>
+           `;
+       }
+
+       function showWorkflowDetail(workflowId) {
+           const workflow = workflows.find(w => w.id === workflowId);
+           if (!workflow) return;
+
+           document.getElementById('mainPage').classList.add('hidden');
+           document.getElementById('workflowDetail').classList.remove('hidden');
+           document.getElementById('workflowTitle').textContent = workflow.name;
+           document.getElementById('workflowDescription').textContent = workflow.desc;
+           document.getElementById('workflowOutput').textContent = workflow.exampleOutput;
+
+           const processContainer = document.getElementById('workflowProcessSteps');
+           processContainer.innerHTML = workflow.process.map((step, index) => `
+               <div class="flex flex-col items-center">
+                   <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                       <i class="${step.icon} text-blue-500"></i>
+                   </div>
+                   <span class="mt-1 text-xs font-medium text-center">${step.text}</span>
+               </div>
+               ${index < workflow.process.length - 1 ? `
+                   <div class="flex items-center">
+                       <i class="fas fa-arrow-right text-gray-400"></i>
+                   </div>
+               ` : ''}
+           `).join('');
+       }
+
+       function showMainPage() {
+           document.getElementById('workflowDetail').classList.add('hidden');
+           document.getElementById('mainPage').classList.remove('hidden');
+       }
+
+       function filterWorkflows() {
+           const selectedFilters = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+               .map(cb => cb.value);
+           
+           const cards = document.querySelectorAll('.workflow-card');
+           cards.forEach(card => {
+               const inputs = card.dataset.inputs.split(',');
+               const shouldShow = selectedFilters.length === 0 || 
+                   inputs.some(input => selectedFilters.includes(input));
+               card.style.display = shouldShow ? 'block' : 'none';
+           });
+       }
+
+       async function copyOutput() {
+           const output = document.getElementById('workflowOutput').textContent;
+           try {
+               await navigator.clipboard.writeText(output);
+               alert('Copied to clipboard!');
+           } catch (err) {
+               console.error('Failed to copy:', err);
+           }
+       }
+
+       document.addEventListener('DOMContentLoaded', () => {
+           const grid = document.getElementById('workflowsGrid');
+           workflows.forEach(workflow => {
+               grid.innerHTML += createWorkflowCard(workflow);
+           });
+       });
+   </script>
+</body>
+</html>
