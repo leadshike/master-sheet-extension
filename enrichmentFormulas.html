@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Enrichment Formulas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar-item:hover {
+            background-color: #f3f4f6;
+        }
+        .formula-card {
+            transition: all 0.2s ease;
+        }
+        .formula-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-md flex flex-col">
+            <!-- Header -->
+            <div class="p-4 border-b">
+                <h1 class="text-lg font-medium">Enrichment Formulas</h1>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex-1 overflow-y-auto">
+                <!-- Person Info Section -->
+                <div class="border-b">
+                    <button onclick="toggleSection('personInfo')" class="w-full p-3 flex items-center justify-between text-sm hover:bg-gray-50">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-user text-purple-500"></i>
+                            <span>Person Info</span>
+                            <span class="text-xs text-gray-500">54</span>
+                        </div>
+                        <i id="personInfoIcon" class="fas fa-chevron-right transition-transform"></i>
+                    </button>
+                    <div id="personInfoContent" class="hidden">
+                        <button onclick="showFormulas('emailByName')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="far fa-envelope text-gray-500"></i>
+                            <span>Get email by name and company</span>
+                        </button>
+                        <button onclick="showFormulas('emailBySocial')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="fas fa-link text-gray-500"></i>
+                            <span>Get email from social link</span>
+                        </button>
+                        <button onclick="showFormulas('phoneNumber')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="fas fa-phone text-gray-500"></i>
+                            <span>Get phone number</span>
+                        </button>
+                        <button onclick="showFormulas('socialLink')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="fas fa-share-alt text-gray-500"></i>
+                            <span>Find social link</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Company Info Section -->
+                <div class="border-b">
+                    <button onclick="toggleSection('companyInfo')" class="w-full p-3 flex items-center justify-between text-sm hover:bg-gray-50">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-building text-blue-500"></i>
+                            <span>Company Info</span>
+                            <span class="text-xs text-gray-500">99+</span>
+                        </div>
+                        <i id="companyInfoIcon" class="fas fa-chevron-right transition-transform"></i>
+                    </button>
+                    <div id="companyInfoContent" class="hidden">
+                        <button onclick="showFormulas('companyData')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="fas fa-search text-gray-500"></i>
+                            <span>Lookup company data (all-in-one)</span>
+                        </button>
+                        <button onclick="showFormulas('companyContacts')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="fas fa-address-book text-gray-500"></i>
+                            <span>Search contacts at company</span>
+                        </button>
+                        <button onclick="showFormulas('companySocial')" class="w-full p-2 pl-8 text-sm text-left hover:bg-gray-50 flex items-center space-x-2">
+                            <i class="fas fa-link text-gray-500"></i>
+                            <span>Find website & social link</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto p-4">
+            <!-- Content header with back button -->
+            <div class="flex items-center mb-4">
+                <button onclick="goBack()" class="text-gray-600 hover:text-gray-800 mr-2">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 id="contentTitle" class="text-lg font-medium"></h2>
+            </div>
+
+            <!-- Formula cards container -->
+            <div id="formulaCards" class="grid grid-cols-1 gap-3">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formulas = {
+    // Get email by name and company options
+    emailByName: [
+        {
+            icon: '<i class="fas fa-user-circle text-indigo-500"></i>',
+            title: 'Get people data from names',
+            description: "Takes an individual's name as input and returns their email (if found)",
+            credits: 3
+        },
+        {
+            icon: '<i class="fas fa-building text-orange-500"></i>',
+            title: 'Find emails by company and name',
+            description: 'Input a company URL, first name, and last name, and receive their email',
+            credits: 6
+        },
+        {
+            icon: '<i class="fas fa-address-card text-purple-500"></i>',
+            title: 'Get contact data',
+            description: 'A generalized contact enrichment which can work with emails, social links',
+            credits: 20
+        },
+        {
+            icon: '<i class="fas fa-envelope text-pink-500"></i>',
+            title: 'Get email by name and company link',
+            description: 'Takes a first/last name and company link in, and returns their email',
+            credits: 4
+        },
+        {
+            icon: '<i class="fas fa-id-card text-blue-500"></i>',
+            title: 'Get contact info by name and company',
+            description: "Retrieves a person's email and data by their name and company",
+            credits: 5
+        }
+    ],
+
+    // Get email from social link options
+    emailBySocial: [
+        {
+            icon: '<i class="fas fa-user-plus text-purple-500"></i>',
+            title: 'Enrich person by social link',
+            description: 'Get emails, employment, location, and other professional data',
+            credits: 20
+        },
+        {
+            icon: '<i class="fab fa-linkedin text-blue-500"></i>',
+            title: 'Get emails & prospect data by LinkedIn profile',
+            description: "Takes a professional's LinkedIn link or id as input and returns their data",
+            credits: 15
+        },
+        {
+            icon: '<i class="fas fa-chart-network text-green-500"></i>',
+            title: 'Prospect data by social link',
+            description: "Retrieves a person's email, company data, and other data points",
+            credits: 5
+        },
+        {
+            icon: '<i class="fas fa-envelope-open text-cyan-500"></i>',
+            title: 'Get email from LinkedIn profile',
+            description: 'Get profile details for a single LinkedIn profile URL',
+            credits: 9
+        }
+    ],
+
+    // Get phone number options
+    phoneNumber: [
+        {
+            icon: '<i class="fas fa-address-book text-purple-500"></i>',
+            title: 'Get contact data',
+            description: 'A generalized contact enrichment which can work with emails, social links',
+            credits: 20
+        },
+        {
+            icon: '<i class="fas fa-phone-square text-blue-500"></i>',
+            title: 'Phone finder by Databar',
+            description: 'Returns phone numbers of individuals by their LinkedIn',
+            credits: 10
+        },
+        {
+            icon: '<i class="fas fa-mobile-alt text-green-500"></i>',
+            title: 'Find mobile phones by social link',
+            description: "Takes a user's LinkedIn social link and retrieves their phone number",
+            credits: 8
+        },
+        {
+            icon: '<i class="fas fa-phone text-red-500"></i>',
+            title: 'Get phone from LinkedIn',
+            description: "Finds someone's phone number by LinkedIn profile link",
+            credits: 50
+        },
+        {
+            icon: '<i class="fas fa-search text-indigo-500"></i>',
+            title: 'Phone number lookup by LinkedIn',
+            description: "Takes a LinkedIn profile as input and retrieves the person's mobile",
+            credits: 45
+        }
+    ],
+
+    // Find social link options
+    socialLink: [
+        {
+            icon: '<i class="fab fa-linkedin text-blue-500"></i>',
+            title: 'Find LinkedIn by email',
+            description: "Takes a business email as input and returns the person's LinkedIn",
+            credits: 5
+        },
+        {
+            icon: '<i class="fas fa-envelope-square text-green-500"></i>',
+            title: 'Get LinkedIn from email',
+            description: 'Get LinkedIn profile url for a given email',
+            credits: 10
+        }
+    ],
+
+    // Company Info - Lookup company data options
+    companyData: [
+        {
+            icon: '<i class="fas fa-building text-blue-500"></i>',
+            title: 'Get company data from link',
+            description: "Data returned includes the company's phone numbers, email addresses",
+            credits: 0,
+            auth: true
+        },
+        {
+            icon: '<i class="fas fa-search-plus text-purple-500"></i>',
+            title: 'Get company data by link or name',
+            description: 'Get social links, competitors, est. revenues, headcount, and 50+ other data points',
+            credits: 3
+        },
+        {
+            icon: '<i class="fas fa-building-shield text-indigo-500"></i>',
+            title: 'Lookup company by name or link',
+            description: 'Looks up any given company by its name, website, or social link',
+            credits: 3
+        },
+        {
+            icon: '<i class="fas fa-chart-pie text-green-500"></i>',
+            title: 'Enrich company data',
+            description: 'Get detailed data about a company, including links, fundraising history',
+            credits: 15
+        }
+    ],
+
+    // Search contacts at company options
+    companyContacts: [
+        {
+            icon: '<i class="fas fa-envelope text-blue-500"></i>',
+            title: 'Scrape emails from URL',
+            description: 'Returns all email addresses listed on a given website/URL',
+            credits: 4
+        },
+        {
+            icon: '<i class="fas fa-filter text-orange-500"></i>',
+            title: 'Find emails by company, role, and other filters',
+            description: 'Finds emails (and other data) of people at companies by role, job title',
+            credits: 0,
+            auth: true
+        },
+        {
+            icon: '<i class="fas fa-users text-purple-500"></i>',
+            title: 'Search people with filters',
+            description: 'Searches for people at companies with filters',
+            credits: 30
+        },
+        {
+            icon: '<i class="fas fa-building-user text-green-500"></i>',
+            title: 'Find emails by company and department',
+            description: 'Get the email address of professionals at a company from the company website',
+            credits: 10
+        }
+    ],
+
+    // Find website & social link options
+    companySocial: [
+        {
+            icon: '<i class="fas fa-globe text-blue-500"></i>',
+            title: 'Get company website from name',
+            description: 'Takes a company name and returns its website in return. Website returned',
+            credits: 0.1
+        },
+        {
+            icon: '<i class="fas fa-search-location text-purple-500"></i>',
+            title: 'Lookup company by name or link',
+            description: 'Looks up any given company by its name, website, or social link',
+            credits: 3
+        },
+        {
+            icon: '<i class="fas fa-link text-gray-500"></i>',
+            title: 'Get URL from redirect link',
+            description: 'Takes a redirect URL (e.g. https://lnkd.in/euvFDyeY) and extracts the actual URL',
+            credits: 0,
+            auth: false,
+            free: true
+        },
+        {
+            icon: '<i class="fas fa-desktop text-green-500"></i>',
+            title: 'Get company URL from name',
+            description: 'Searches for company URLs by the company name via search engines',
+            credits: 1
+        }
+    ]
+};
+
+        function toggleSection(section) {
+            const content = document.getElementById(section + 'Content');
+            const icon = document.getElementById(section + 'Icon');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-90');
+        }
+
+        function showFormulas(type) {
+            const container = document.getElementById('formulaCards');
+            container.innerHTML = ''; // Clear existing cards
+
+            // Set the content title
+            document.getElementById('contentTitle').textContent = type.replace(/([A-Z])/g, ' $1').trim();
+
+            // Generate cards based on type
+            formulas[type]?.forEach(formula => {
+                container.innerHTML += `
+                    <div class="formula-card bg-white rounded-lg shadow-sm p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                ${formula.icon}
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium">${formula.title}</h3>
+                                <p class="text-xs text-gray-500">${formula.description}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1 bg-purple-100 px-2 py-1 rounded">
+                            <i class="fas fa-bolt text-xs text-purple-500"></i>
+                            <span class="text-xs text-purple-500">${formula.credits}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function goBack() {
+            // Implement back functionality if needed
+        }
+
+        // Initialize with person info expanded
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleSection('personInfo');
+            showFormulas('emailByName');
+        });
+    </script>
+</body>
+
+</html>
