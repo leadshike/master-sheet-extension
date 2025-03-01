@@ -46,6 +46,11 @@ function onOpen() {
    .createMenu(MENU_TITLE)
    .addItem('Open', 'openSidebar')
    .addToUi();
+
+  SpreadsheetApp.getUi()
+   .createMenu('My Old Extension')
+   .addItem('Open', 'openTestSidebar')
+   .addToUi();
 }
 
 function getEmail() {
@@ -104,6 +109,43 @@ function openSidebar() {
  SpreadsheetApp.getUi().showSidebar(htmlOutput);
 }
 
+
+function openTestSidebar() {
+ const userEmail = getEmail();
+ let credits = 0;
+
+ try {
+   const result = fetchUserData(userEmail);
+   const responseCode = result.response.getResponseCode();
+
+   if (responseCode === 200) {
+     credits = result.data.fields.credits.integerValue;
+     SpreadsheetApp.getUi().alert(`Welcome back! You are already registered. You have ${credits} credits left.`);
+   } else if (responseCode === 404) {
+     credits = DEFAULT_CREDITS;
+     registerUser(userEmail);
+     SpreadsheetApp.getUi().alert(`Welcome! You have been registered successfully. You have ${credits} credits.`);
+   } else {
+     throw new Error(`Unexpected response code: ${responseCode}`);
+   }
+
+   PropertiesService.getScriptProperties().setProperty('userEmail', userEmail);
+ } catch (error) {
+   console.error('Error fetching or registering user data:', error);
+   SpreadsheetApp.getUi().alert(ERROR_MESSAGES.FETCH_USER);
+ }
+
+ const template = HtmlService.createTemplateFromFile('oldSidebar');
+ template.credits = credits;
+
+ const htmlOutput = template
+   .evaluate()
+   .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+   .setTitle(SIDEBAR_TITLE)
+   .setWidth(SIDEBAR_WIDTH);
+
+ SpreadsheetApp.getUi().showSidebar(htmlOutput);
+}
 function openDocsPopup() {
   const html = HtmlService.createHtmlOutputFromFile('docs')
   SpreadsheetApp.getUi().showModalDialog(html, 'Formula Documentation');
