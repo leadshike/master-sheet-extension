@@ -1,0 +1,3277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Master Sheet Extension</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
+  </head>
+ <body class="max-w-4xl mx-auto p-4 font-sans bg-gray-50">
+  <!-- Header Section -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <!-- <h1 class="text-sm font-semibold text-gray-900">Master Extension</h1> -->
+      <p class="text-xs text-gray-600">Enhance your spreadsheets with ease</p>
+    </div>
+    <!-- User Profile Button -->
+    <button id="userProfileBtn"
+      class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-medium hover:bg-green-700 transition-colors duration-200">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- User Profile Section -->
+  <section id="userProfileSection" class="hidden fixed inset-0 bg-white z-50">
+    <!-- Header with back button -->
+    <div class="flex items-center p-3 border-b border-gray-200">
+      <button id="backButton" class="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200">
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <h2 class="ml-2 text-base font-semibold text-gray-900">User Profile</h2>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="p-4 space-y-4">
+      <!-- User Info -->
+      <div class="bg-gray-100 rounded-md p-3">
+        <div class="flex items-center space-x-3">
+          <div id="userAvatar"
+            class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center text-lg font-medium">
+          </div>
+          <div>
+            <h3 id="userEmail" class="text-sm font-medium text-gray-900"></h3>
+            <div class="mt-1 flex items-center space-x-2">
+              <span class="text-xs text-gray-600">Available Credits:</span>
+              <span id="userCredits" class="text-xs font-medium text-green-700"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Run History -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-3">Run History</h3>
+        <div id="runHistory" class="space-y-3"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="flex border-b border-gray-200 mb-4 relative">
+    <button id="docs-tab"
+      class="flex-1 px-3 py-2 text-xs font-medium text-gray-500 transition-all duration-200 focus:outline-none group relative hover:text-green-600">
+      <span class="relative inline-block">
+        Docs
+        <span
+          class="absolute left-0 bottom-0 w-full h-0.5 bg-green-600 transform origin-left scale-x-0 transition-transform duration-200 group-hover:scale-x-100"></span>
+      </span>
+    </button>
+    <button id="dynamic-prompts-tab"
+      class="flex-1 px-3 py-2 text-xs font-medium text-gray-500 transition-all duration-200 focus:outline-none group relative hover:text-green-600">
+      <span class="relative inline-block">
+        Dynamic Prompts
+        <span
+          class="absolute left-0 bottom-0 w-full h-0.5 bg-green-600 transform origin-left scale-x-0 transition-transform duration-200 group-hover:scale-x-100"></span>
+      </span>
+    </button>
+  </nav>
+
+  <!-- Docs Section -->
+  <section id="docs-section" class="space-y-4">
+    <!-- Quick Start Guide -->
+    <div class="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-md shadow-sm">
+      <div class="flex items-center space-x-2 mb-2">
+        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h2 class="text-sm font-semibold text-green-800">Quick Start Guide</h2>
+      </div>
+      <p class="text-xs text-green-700 leading-relaxed">
+        Use these formulas to enhance your spreadsheet functionality
+      </p>
+    </div>
+
+    <!-- Filter Dropdown -->
+    <div class="w-full">
+      <select id="formula-filter"
+        class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200">
+        <option value="All">All</option>
+        <option value="Gemini Formula">Gemini Formula</option>
+        <option value="Hyper Formula">Hyper Formula</option>
+        <option value="Data Integration Formula">Data Integration Formula</option>
+      </select>
+    </div>
+
+    <!-- Formula Cards Container -->
+    <div id="formula-cards" class="space-y-2">
+      <!-- Cards will be inserted here by JavaScript -->
+    </div>
+
+    <!-- Credit System -->
+    <div class="bg-green-50 rounded-md p-3 shadow-sm border border-green-100">
+      <div class="flex items-center space-x-2 mb-2">
+        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="text-sm font-semibold text-green-800">Credit System</h3>
+      </div>
+      <ul class="space-y-1">
+        <li class="flex items-start space-x-2 text-xs text-green-700">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0 mt-1"></span>
+          <span>Each API call: 1 credit</span>
+        </li>
+        <li class="flex items-start space-x-2 text-xs text-green-700">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0 mt-1"></span>
+          <span>New users start with: 50 credits</span>
+        </li>
+        <li class="flex items-start space-x-2 text-xs text-green-700">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0 mt-1"></span>
+          <span>Header updates: 1 credit per header</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Dynamic Prompts Section -->
+  <section id="dynamic-prompts-section" class="hidden space-y-4">
+    <div class="flex items-center space-x-2 mb-3">
+      <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+      <h2 class="text-sm font-semibold text-gray-900">Dynamic Prompts</h2>
+    </div>
+
+    <!-- Empty State Description - Initially Visible -->
+    <div id="empty-state-description" class="mb-4 bg-gray-100 rounded-md p-3">
+      <div class="flex items-start space-x-3">
+        <div class="flex-shrink-0 mt-1">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-sm font-medium text-gray-700 mb-1">
+            Get Started with Dynamic Prompts
+          </h3>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Choose an integration type to begin. Available options include:
+          </p>
+          <ul class="mt-2 space-y-1">
+            <li class="flex items-center text-xs text-gray-600">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              <span>AI APIs for advanced language processing</span>
+            </li>
+            <li class="flex items-center text-xs text-gray-600">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              <span>Hyper APIs for personalized content</span>
+            </li>
+            <li class="flex items-center text-xs text-gray-600">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              <span>Data Enrichment for enhanced insights</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integration Type Selection -->
+    <div class="mb-4">
+      <label class="block text-xs font-medium text-gray-600 mb-1">Select Integration</label>
+      <select id="integration-type"
+        class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+        required>
+        <option value="">-- Select Integration Type --</option>
+        <option value="ai-apis">AI APIs</option>
+        <option value="hyper-apis">Hyper APIs</option>
+        <option value="data-enrichment">Data Enrichment APIs</option>
+        <option value="data-integration">Data Integration APIs</option>
+      </select>
+    </div>
+
+    <!-- AI APIs Form -->
+    <div id="ai-apis-form" class="hidden space-y-3">
+      <div class="flex items-center space-x-2 mb-2">
+        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h3 class="text-sm font-semibold text-gray-900">AI APIs</h3>
+      </div>
+
+      <form id="dynamic-prompts-form" class="space-y-3">
+        <!-- Formula Selection -->
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-gray-600">Select Formula</label>
+          <select id="formula-dropdown"
+            class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+            required>
+            <option value="">-- Select prompt formula --</option>
+            <option value="CREATE_CUSTOM_FORMULA">
+              Create Custom Formula
+            </option>
+          </select>
+        </div>
+
+        <!-- Header Inputs -->
+        <div id="header-inputs" class="space-y-2"></div>
+
+        <!-- Prompt -->
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-gray-600">Prompt</label>
+          <textarea id="prompt"
+            class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200 min-h-[80px] resize-y"
+            placeholder="Enter your prompt like `Generate a summary on the article on [B]`" required></textarea>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-gray-600">Model</label>
+          <select id="model-dropdown"
+            class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+            required>
+            <option value="Gemini 1.5 flash">Gemini 1.5 flash</option>
+            <option value="Open AI gpt-3.5-turbo">
+              Open AI gpt-3.5-turbo
+            </option>
+            <option value="Open AI gpt-4o-mini">Open AI gpt-4o-mini</option>
+            <option value="Hyper modal">Hyper modal</option>
+          </select>
+        </div>
+
+        <!-- Tone Selection -->
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-gray-600">Tone</label>
+          <select id="tone-dropdown"
+            class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+            required>
+            <option value="Professional">Professional</option>
+            <option value="Friendly">Friendly</option>
+            <option value="Casual">Casual</option>
+            <option value="Formal">Formal</option>
+            <option value="Funny">Funny</option>
+          </select>
+        </div>
+
+        <!-- Column Input -->
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-gray-600">Destination Column (A-Z)</label>
+          <input type="text" id="dest-column"
+            class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+            pattern="[A-Z]" placeholder="D" required />
+        </div>
+
+        <!-- Row Inputs -->
+        <div class="grid grid-cols-2 gap-2">
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600">Start Row</label>
+            <input type="number" id="start-row"
+              class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+              placeholder="5" required />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600">End Row</label>
+            <input type="number" id="end-row"
+              class="w-full p-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:ring-0 focus:border-green-500 transition-colors duration-200"
+              placeholder="10" />
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button type="submit"
+          class="w-full p-2 rounded-md bg-green-600 text-xs font-semibold text-white hover:bg-green-700 transition-colors duration-200">
+          Generate
+        </button>
+      </form>
+    </div>
+
+    <!-- Hyper APIs Form -->
+    <div id="hyper-apis-form" class="hidden space-y-3">
+      <!-- Header -->
+      <div class="flex items-center space-x-2 mb-2">
+        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h3 class="text-xs font-semibold text-gray-800">Hyper APIs</h3>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Type Selection -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-600">Select Type</label>
+          <select id="hyper-type"
+            class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+            required>
+            <option value="">-- Select Type --</option>
+            <option value="website">Website Hyper</option>
+            <option value="linkedin">LinkedIn Hyper Personalization</option>
+            <option value="website-linkedin">
+              Website LinkedIn Hyper Personalization
+            </option>
+          </select>
+        </div>
+
+        <!-- Recipe Section -->
+        <div id="recipe-section" class="hidden space-y-3">
+          <!-- Recipe Selection -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-600">Select Recipe</label>
+            <select id="recipe-type"
+              class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+              required>
+              <option value="">-- Select Recipe --</option>
+              <option value="create-custom-recipe">
+                Create Custom Recipe
+              </option>
+              <option value="Appreciate_mission_statement">
+                Appreciate Mission Statement
+              </option>
+              <option value="Highlight_pain_point_industry">
+                Highlight Pain Point Industry
+              </option>
+            </select>
+          </div>
+
+          <!-- Recipe Description -->
+          <div id="recipe-description" class="hidden space-y-1.5">
+            <label class="block text-xs font-medium text-gray-600">COPY Description</label>
+            <textarea id="copy-description"
+              class="w-full h-24 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200 resize-none"
+              readonly></textarea>
+          </div>
+
+          <!-- Parameters Section -->
+          <div id="parameters-section" class="hidden space-y-2">
+            <div class="flex items-center space-x-2">
+              <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <h4 class="text-xs font-semibold text-gray-700">
+                Parameters Set
+              </h4>
+            </div>
+            <div id="parameters-container" class="space-y-2 mt-2"></div>
+          </div>
+
+          <!-- Row Inputs -->
+          <div id="row-inputs-section" class="hidden space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1.5">
+                <label class="block text-xs font-medium text-gray-600">Start Row</label>
+                <input type="number" id="hyper-start-row"
+                  class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+                  required min="2" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-medium text-gray-600">End Row</label>
+                <input type="number" id="hyper-end-row"
+                  class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+                  min="2" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Generate Button -->
+          <button id="generate-hyper"
+            class="w-full px-3 py-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200 group">
+            <span class="relative z-10 flex items-center justify-center">
+              Generate
+            </span>
+            <div
+              class="absolute inset-0 bg-emerald-600 transform scale-x-0 origin-left transition-transform group-hover:scale-x-100">
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Enrichment Form -->
+    <div id="data-enrichment-form" class="hidden p-3 bg-gray-50 rounded-md">
+      <div class="flex items-center space-x-2">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <div class="text-center flex-1">
+          <h3 class="text-xs font-semibold text-gray-800 mb-1">
+            Data Enrichment APIs
+          </h3>
+          <p class="text-xs text-gray-500">Features coming soon...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Integration Form -->
+<div id="data-integration-form" class="hidden p-3 bg-gray-50 rounded-md space-y-4">
+  <!-- Provider Selection -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1.5">Select Provider</label>
+    <select id="integration-provider"
+      class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+      required>
+      <option value="">-- Select Provider --</option>
+      <option value="Datagma">Datagma</option>
+      <option value="Hyper">Hyper</option>
+    </select>
+  </div>
+
+  <!-- Function Selection (Initially Hidden) -->
+  <div id="function-select-container" class="hidden">
+    <label class="block text-xs font-medium text-gray-600 mb-1.5">Select Function</label>
+    <select id="integration-function"
+      class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+      required>
+      <option value="">-- Select Function --</option>
+    </select>
+  </div>
+
+  <!-- Function Inputs Container (Initially Hidden) -->
+  <div id="function-inputs-container" class="hidden space-y-4">
+    <!-- Sheet Inputs Section -->
+    <div id="sheet-inputs-section" class="space-y-3">
+      <label class="block text-xs font-medium text-gray-600">Sheet Inputs</label>
+      <div id="sheet-inputs-fields"></div>
+    </div>
+
+    <!-- Form Inputs Section -->
+    <div id="form-inputs-section" class="space-y-3">
+      <label class="block text-xs font-medium text-gray-600">Form Inputs</label>
+      <div id="form-inputs-fields"></div>
+    </div>
+
+    <!-- Row Inputs -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-gray-600">Start Row</label>
+        <input type="number" id="integration-start-row"
+          class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+          placeholder="5" required />
+      </div>
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-gray-600">End Row</label>
+        <input type="number" id="integration-end-row"
+          class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+          placeholder="10" />
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <button type="button"
+      class="w-full px-3 py-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200 group"
+      id="integration-generate-button">
+      <span class="relative z-10 flex items-center justify-center">
+        Generate
+      </span>
+      <div
+        class="absolute inset-0 bg-emerald-600 transform scale-x-0 origin-left transition-transform group-hover:scale-x-100">
+      </div>
+    </button>
+  </div>
+</div>
+  </section>
+
+  <!-- Custom Recipe Modal -->
+  <div id="custom-recipe-modal"
+    class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm transition-all duration-300 drop-shadow-2xl">
+    <div
+      class="bg-white mx-auto my-6 p-4 rounded-lg shadow-lg w-11/12 max-w-md transform transition-all duration-300 scale-95 opacity-0">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-2">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h2 class="text-sm font-semibold text-gray-800">
+            Create Custom Recipe
+          </h2>
+        </div>
+        <button
+          class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
+          onclick="closeCustomRecipeModal()">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form id="custom-recipe-form" class="space-y-3">
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-600">Recipe Name</label>
+          <input type="text" id="custom-recipe-name"
+            class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+            placeholder="Enter recipe name" required />
+        </div>
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-600">COPY Description</label>
+          <textarea id="custom-recipe-description"
+            class="w-full h-24 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200 resize-none"
+            placeholder="Enter description" required></textarea>
+          <!-- Add this suggestions container -->
+          <div id="suggestions-container"
+            class="hidden absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200 max-h-40 overflow-y-auto">
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-2 pt-2">
+          <button type="submit" id="create-recipe-btn"
+            class="flex-1 flex justify-center items-center pw-full px-1 py-1.5 rounded-md bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200 group">
+            <span class="relative flex items-center justify-center">
+              Create Recipe
+            </span>
+            <svg class="w-4 h-4 ml-1.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+          <button type="button" onclick="closeCustomRecipeModal()"
+            class="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1 transition-all duration-200">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Formula Modal -->
+  <div id="customFormulaModal"
+    class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm transition-all duration-300"
+    aria-modal="true" role="dialog">
+    <div class="bg-white mx-auto my-6 p-4 rounded-lg shadow-lg w-11/12 max-w-md transform transition-all duration-300">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-2">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+          </svg>
+          <h2 class="text-sm font-semibold text-gray-800">
+            Create Custom Formula
+          </h2>
+        </div>
+        <button
+          class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
+          onclick="closeModal()">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form id="custom-formula-form" onsubmit="return false;" class="space-y-3">
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-600">Formula Name</label>
+          <input type="text" id="custom-formula-name"
+            class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+            placeholder="e.g., SEO_OPTIMIZE" oninput="this.value = this.value.toUpperCase()" required />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-600">Headers</label>
+          <div id="custom-headers-inputs" class="space-y-2">
+            <div class="flex gap-2">
+              <input type="text" value="A1"
+                class="w-9 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+                required />
+              <input type="text" placeholder="Header1"
+                class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+                required />
+              <button type="button" onclick="addHeaderInput()"
+                class="px-1 py-1.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-600">Prompt</label>
+          <textarea id="custom-prompt"
+            class="w-full h-24 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200 resize-none"
+            placeholder="Enter your prompt here..." required></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-2 pt-2">
+          <button type="button" id="create-custom-formula-button"
+            class="flex-1 px-3 py-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200 group">
+            <span class="relative flex items-center justify-center">
+              Create Formula
+            </span>
+          </button>
+          <button type="button" onclick="closeModal()"
+            class="flex-1 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1 transition-all duration-200">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Global variables
+    let userCredits = 0;
+    let userRunHistory = [];
+    let currentUserEmail = '';
+
+    // Function to initialize user profile
+    async function initializeUserProfile() {
+      try {
+        const userInfo = await google.script.run.withSuccessHandler(handleUserInfo).getUserInfo();
+      } catch (error) {
+        console.error('Error initializing user profile:', error);
+      }
+    }
+
+    // Handler for user info
+    function handleUserInfo(userInfo) {
+      if (!userInfo) return;
+
+      currentUserEmail = userInfo.email;
+      userCredits = userInfo.credits;
+      userRunHistory = userInfo.runHistory;
+
+      // Update credits display
+      const creditsElement = document.getElementById('credits');
+      creditsElement.textContent = `${userInfo.credits} credits remaining`;
+
+      // Setup user profile button
+      const userProfileBtn = document.getElementById('userProfileBtn');
+      userProfileBtn.textContent = userInfo.email[0].toUpperCase();
+      userProfileBtn.classList.remove('hidden');
+
+      // Update profile section content
+      document.getElementById('userEmail').textContent = userInfo.email;
+      document.getElementById('userCredits').textContent = userInfo.credits;
+      document.getElementById('userAvatar').textContent = userInfo.email[0].toUpperCase();
+
+      // Render run history
+      renderRunHistory(userInfo.runHistory);
+    }
+
+    // Function to render run history
+    function renderRunHistory(history) {
+      const runHistoryContainer = document.getElementById('runHistory');
+      runHistoryContainer.innerHTML = '';
+
+      if (!history.length) {
+        runHistoryContainer.innerHTML = `
+            <div class="text-center py-6 text-gray-500 text-sm">
+              No run history available
+            </div>
+          `;
+        return;
+      }
+
+      history.reverse().forEach(entry => {
+        const fields = entry.mapValue.fields;
+        const historyItem = document.createElement('div');
+        historyItem.className = 'bg-white rounded-lg border border-gray-200 p-3 text-xs';
+
+        const timestamp = new Date(fields.startTime.stringValue);
+        const formattedDate = timestamp.toLocaleDateString();
+        const formattedTime = timestamp.toLocaleTimeString();
+
+        historyItem.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <span class="font-medium text-gray-800">${fields.functionName.stringValue}</span>
+                <span class="text-gray-500 ml-2">${fields.runName.stringValue}</span>
+              </div>
+              <span class="text-gray-500">${formattedDate} ${formattedTime}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex items-center space-x-1">
+                <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="text-gray-600">Success: ${fields.successfulCalls.integerValue}</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                <span class="text-gray-600">Failed: ${fields.failedCalls.integerValue}</span>
+              </div>
+            </div>
+          `;
+
+        runHistoryContainer.appendChild(historyItem);
+      });
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      const userProfileBtn = document.getElementById('userProfileBtn');
+      const userProfileSection = document.getElementById('userProfileSection');
+      const backButton = document.getElementById('backButton');
+
+      // Toggle profile section
+      userProfileBtn.addEventListener('click', () => {
+        userProfileSection.classList.remove('hidden');
+      });
+
+      // Back button
+      backButton.addEventListener('click', () => {
+        userProfileSection.classList.add('hidden');
+      });
+
+      // Initialize user profile
+      initializeUserProfile();
+    });
+
+    // Formula categories mapping
+    const FORMULA_CATEGORIES = {
+      'FIND_ICEBREAK': 'Gemini Formula',
+      'FIND_CONTENT': 'Gemini Formula',
+      'FIND_SUMMARY': 'Gemini Formula',
+      'FIND_POST': 'Gemini Formula',
+      'FIND_INDUSTRY': 'Gemini Formula',
+      'TEST': 'Gemini Formula',
+      'FIND_EMAIL': 'Data Integration Formula',
+      'FIND_COMPANY_LINKEDIN': 'Data Integration Formula',
+      'FIND_VERIFIED_EMAIL': 'Data Integration Formula'
+    };
+
+    const formulaData = [
+      {
+        name: "FIND_ICEBREAK",
+        formula:
+          '=FIND_ICEBREAK("Generate an icebreaker question based on [C]", "D", 3, 5)',
+        description:
+          "Generates icebreaker questions based on the provided prompt.",
+        params: [
+          {
+            name: "promptText",
+            desc: "A string containing the prompt with a placeholder for the topic",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the response will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "FIND_CONTENT",
+        formula:
+          '=FIND_CONTENT("Create a blog post on topic [A], keywords [B], tone [C] and style [D]", "E", 3, 5)',
+        description:
+          "Generates social media content based on the provided topic, keywords, tone and style(Blog, Summary, Article).",
+        params: [
+          {
+            name: "promptText",
+            desc: "A string containing the prompt with placeholders for the topic and website",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the response will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "FIND_SUMMARY",
+        formula: '=FIND_SUMMARY("Summarize the article in [C]", "D", 3, 5)',
+        description:
+          "Generates a summary of the content based on the provided prompt.",
+        params: [
+          {
+            name: "promptText",
+            desc: "A string containing the prompt with a placeholder for the content",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the summary will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "FIND_POST",
+        formula: '=FIND_POST("Create a blog post about [C]", "D", 3, 5)',
+        description: "Generates blog posts based on the provided prompt.",
+        params: [
+          {
+            name: "promptText",
+            desc: "A string containing the prompt with a placeholder for the topic",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the response will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "FIND_INDUSTRY",
+        formula:
+          '=FIND_INDUSTRY("Identify the company industry and provide a brief description based on the website [B]. ","B", 2, 5)',
+        description: "Analyzes websites and outputs industry information.",
+        params: [
+          {
+            name: "sourceCol",
+            desc: "The column containing the website URLs",
+          },
+          { name: "rowRange", desc: "The range of rows to analyze" },
+          {
+            name: "destCol",
+            desc: "The column where the industry information will be placed",
+          },
+        ],
+      },
+      {
+        name: "FIND_EMAIL",
+        formula: '=FIND_EMAIL("B", "D", 2, 5)',
+        description:
+          "Takes an website as input and returns the associated email address.",
+        params: [
+          {
+            name: "inputCol",
+            desc: "The column containing the website input",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the email address will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "FIND_COMPANY_LINKEDIN",
+        formula: '=FIND_COMPANY_LINKEDIN("B", "D", 2, 5)',
+        description:
+          "Takes a website as input and returns the Linkedin URL associated with that company website.",
+        params: [
+          {
+            name: "inputCol",
+            desc: "The column containing the website input",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the linkedin url will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "FIND_VERIFIED_EMAIL",
+        formula: '=FIND_VERIFIED_EMAIL("B", "D", 2, 5)',
+        description:
+          "Takes basic details like Firstname, Lastname, Company and LinkedinUrl as input and returns the verified email address associated.",
+        params: [
+          {
+            name: "inputCol",
+            desc: "The column containing the website input",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the verified email address will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+      {
+        name: "TEST",
+        formula:
+          '=TEST("Generate a response based on prompt from [A] and website [B]", "D", 3, 5)',
+        description:
+          "This function compares responses from multiple APIs based on user-defined prompts and websites.",
+        params: [
+          {
+            name: "promptText",
+            desc: "A string containing the prompt with placeholders for the topic and website",
+          },
+          {
+            name: "destCol",
+            desc: "The column where the response will be placed",
+          },
+          {
+            name: "startRow",
+            desc: "The starting row number for processing",
+          },
+          {
+            name: "endRow",
+            desc: "The optional ending row number for processing",
+          },
+        ],
+      },
+    ];
+
+    function showToast(message, type = "success") {
+      // Remove any existing toasts first
+      const existingToasts = document.querySelectorAll(".toast-notification");
+      existingToasts.forEach((toast) => toast.remove());
+
+      // Create toast container if it doesn't exist
+      let toastContainer = document.getElementById("toast-container");
+      if (!toastContainer) {
+        toastContainer = document.createElement("div");
+        toastContainer.id = "toast-container";
+        toastContainer.className =
+          "fixed top-4 right-4 z-50 flex flex-col gap-2";
+        document.body.appendChild(toastContainer);
+      }
+
+      // Create new toast
+      const toast = document.createElement("div");
+      toast.className = `toast-notification transform transition-all duration-300 translate-x-full`;
+
+      // Set toast content based on type
+      const bgColor =
+        type === "success" ? "border-emerald-500" : "border-red-500";
+      const iconColor =
+        type === "success" ? "text-emerald-500" : "text-red-500";
+      const icon =
+        type === "success"
+          ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`
+          : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>`;
+
+      toast.innerHTML = `
+        <div class="flex items-center p-3 rounded-lg shadow-lg border-l-4 bg-white ${bgColor}">
+            <div class="flex-shrink-0">
+                <svg class="w-4 h-4 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${icon}
+                </svg>
+            </div>
+            <p class="ml-2 text-xs font-medium text-gray-800">${message}</p>
+            <button onclick="closeToast(this.parentElement.parentElement)" 
+                    class="ml-auto p-1 hover:bg-gray-100 rounded-full transition-colors duration-200">
+                <svg class="w-3 h-3 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+
+      // Add toast to container
+      toastContainer.appendChild(toast);
+
+      // Trigger entrance animation
+      requestAnimationFrame(() => {
+        toast.classList.remove("translate-x-full");
+        toast.classList.add("translate-x-0");
+      });
+
+      // Auto remove after delay
+      const timeout = setTimeout(() => {
+        closeToast(toast);
+      }, 2000);
+
+      // Store timeout ID on the element
+      toast.dataset.timeoutId = timeout;
+    }
+
+    function closeToast(toast) {
+      // Clear the auto-remove timeout
+      clearTimeout(Number(toast.dataset.timeoutId));
+
+      // Trigger exit animation
+      toast.classList.add("translate-x-full");
+
+      // Remove element after animation
+      toast.addEventListener(
+        "transitionend",
+        () => {
+          toast.remove();
+
+          // Remove container if no more toasts
+          const container = document.getElementById("toast-container");
+          if (container && !container.hasChildNodes()) {
+            container.remove();
+          }
+        },
+        { once: true }
+      );
+    }
+
+    function createFormulaCards(filter = 'All') {
+      const container = document.getElementById("formula-cards");
+      container.innerHTML = ''; // Clear existing cards
+
+      const filteredData = formulaData.filter(data =>
+        filter === 'All' || FORMULA_CATEGORIES[data.name] === filter
+      );
+
+      filteredData.forEach((data, index) => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-md p-3 shadow-sm hover:shadow-md transition-all duration-200";
+        card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10H9m3-15v20"/>
+                            </svg>
+                            <h3 class="text-xs font-semibold text-gray-800">${data.name}</h3>
+                        </div>
+                        <button 
+                            onclick="toggleCard(${index})"
+                            class="p-1 hover:bg-gray-100 rounded-full"
+                            aria-label="Toggle card details"
+                        >
+                            <svg class="w-4 h-4 text-gray-500 toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="relative bg-gray-50 p-2.5 rounded-md mb-3 group">
+                        <div class="font-mono text-xs text-gray-700 break-all pr-7">${data.formula}</div>
+                        <button 
+                            onclick="copyFormula(${index}, this)"
+                            class="absolute right-2 top-2 p-1 hover:bg-gray-200 rounded-md transition-colors"
+                            title="Copy formula"
+                        >
+                            <div class="copy-icon">
+                                <svg class="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                </svg>
+                            </div>
+                            <div class="loading-spinner hidden">
+                                <svg class="w-3.5 h-3.5 animate-spin text-emerald-500" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                            <div class="success-icon hidden">
+                                <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="card-details hidden">
+                        <p class="text-xs text-gray-600 mb-2">${data.description}</p>
+                        <div class="space-y-1">
+                            <p class="text-xs font-medium text-gray-700">Parameters:</p>
+                            <ul class="space-y-1 pl-4">
+                                ${data.params.map(param => `
+                                    <li class="text-xs text-gray-600 flex items-start space-x-2">
+                                        <span class="w-1 h-1 rounded-full bg-gray-400 flex-shrink-0 mt-1.5"></span>
+                                        <div>
+                                            <span class="font-medium">${param.name}:</span> ${param.desc}
+                                        </div>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleCard(index) {
+      const card = document.querySelectorAll('#formula-cards > div')[index];
+      const details = card.querySelector('.card-details');
+      const icon = card.querySelector('.toggle-icon');
+
+      if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        details.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    async function copyFormula(index, button) {
+      const formula = formulaData[index].formula;
+      const copyIcon = button.querySelector(".copy-icon");
+      const loadingSpinner = button.querySelector(".loading-spinner");
+      const successIcon = button.querySelector(".success-icon");
+
+      // Show loading spinner
+      copyIcon.classList.add("hidden");
+      loadingSpinner.classList.remove("hidden");
+
+      try {
+        await navigator.clipboard.writeText(formula);
+
+        // Show success icon
+        loadingSpinner.classList.add("hidden");
+        successIcon.classList.remove("hidden");
+
+        // Show success toast
+        showToast("Formula copied to clipboard", "success");
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+          successIcon.classList.add("hidden");
+          copyIcon.classList.remove("hidden");
+        }, 2000);
+      } catch (err) {
+        // Show error toast
+        showToast("Failed to copy formula", "error");
+
+        // Reset icons
+        loadingSpinner.classList.add("hidden");
+        copyIcon.classList.remove("hidden");
+
+        console.error("Failed to copy text:", err);
+      }
+    }
+
+    // Initialize the cards when the page loads
+    createFormulaCards();
+
+    // Add filter change listener
+    document.getElementById('formula-filter').addEventListener('change', (e) => {
+      createFormulaCards(e.target.value);
+    });
+
+    const FORMULAS = [
+      {
+        formula: "FIND_ICEBREAK",
+        headers: ["LinkedIn about me", "LinkedIn icebreaker"],
+        prompt: "Generate an icebreaker question based on [C]",
+      },
+      {
+        formula: "TEST",
+        headers: [
+          "Topic",
+          "Website",
+          "Gemini 1.5-flash",
+          "Open AI gpt-3.5-turbo",
+          "Open AI gpt-4o-mini",
+          "Hyper",
+        ],
+        prompt:
+          "Generate a response based on prompt from [A] and website [B]",
+      },
+      {
+        formula: "FIND_CONTENT",
+        headers: ["Topic", "Keywords", "Tone", "Post Type", "Post"],
+        prompt: "Generate content on [C] using keywords [D].",
+      },
+      {
+        formula: "FIND_SUMMARY",
+        headers: ["LinkedIn URL", "Linkedin summary"],
+        prompt: "Give me a summary on [C].",
+      },
+      {
+        formula: "FIND_POST",
+        headers: ["Topic", "Post"],
+        prompt: "Create a blog post about [C]",
+      },
+      {
+        formula: "FIND_INDUSTRY",
+        headers: ["Website URL", "Industry"],
+        prompt: "Give me Industry name and the brief on this company [A]",
+      },
+    ];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      setupTabs();
+      setupEventListeners();
+      setupIntegrationListeners();
+      setupModalHandlers();
+      const modal = document.getElementById("customFormulaModal");
+      if (!modal) return;
+
+      // Prevent clicks inside modal from closing it
+      modal.querySelector(".bg-white")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
+      // Add escape key to close
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+          closeModal();
+        }
+      });
+      // Initialize loading state for dropdowns
+      const loadingState = `
+        <div class="flex items-center text-xs text-gray-500 px-2.5 py-1.5">
+            <svg class="animate-spin h-3 w-3 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+            Loading options...
+        </div>
+    `;
+
+      try {
+        // Setup Formula Dropdown
+        const formulaDropdown = document.getElementById("formula-dropdown");
+        if (formulaDropdown) {
+          // Show loading state
+          const loadingOption = document.createElement("div");
+          loadingOption.innerHTML = loadingState;
+          formulaDropdown.appendChild(loadingOption);
+
+          // Add default formulas
+          FORMULAS.forEach((f) => {
+            const option = document.createElement("option");
+            option.value = f.formula;
+            option.textContent = f.formula;
+            formulaDropdown.appendChild(option);
+          });
+
+          // Add change listener
+          formulaDropdown.addEventListener("change", async (e) => {
+            try {
+              await updateFormFields(e);
+            } catch (error) {
+              showToast(`Error updating fields: ${error.message}`, "error");
+            }
+          });
+
+          // Remove loading state
+          loadingOption.remove();
+        }
+
+        // Update credits display
+        await updateCreditsDisplay();
+
+        await fetchCustomFormulas();
+
+        // Setup recipe form submit listener
+        const recipeForm = document.getElementById("custom-recipe-form"); // Ensure this ID matches your form
+        if (recipeForm) {
+          recipeForm.addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const createRecipeBtn =
+              document.getElementById("create-recipe-btn");
+            try {
+              // Show loading state
+              createRecipeBtn.disabled = true;
+              createRecipeBtn.innerHTML = `
+                        <div class="flex items-center justify-center">
+                            <svg class="animate-spin h-4 w-4 text-white mr-2" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                            </svg>
+                            Creating...
+                        </div>
+                    `;
+
+              await handleCustomRecipeCreation();
+              showToast("Recipe created successfully!", "success");
+            } catch (error) {
+              showToast(`Failed to create recipe: ${error.message}`, "error");
+            } finally {
+              // Reset button state
+              createRecipeBtn.disabled = false;
+              createRecipeBtn.innerHTML = `
+                        <span class="flex items-center justify-center">
+                            Create Recipe
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </span>
+                    `;
+            }
+          });
+        }
+
+        // Modal close handling
+        window.onclick = (event) => {
+          const modal = document.getElementById("custom-recipe-modal");
+          if (event.target === modal) {
+            closeCustomRecipeModal();
+          }
+        };
+
+        // Fetch custom recipes
+        const recipeType = document.getElementById("recipe-type");
+        if (recipeType) {
+          try {
+            // Show loading state
+            const loadingDiv = document.createElement("div");
+            loadingDiv.innerHTML = loadingState;
+            recipeType.parentNode.insertBefore(
+              loadingDiv,
+              recipeType.nextSibling
+            );
+            recipeType.style.display = "none";
+
+            const recipes = await new Promise((resolve, reject) => {
+              google.script.run
+                .withSuccessHandler(resolve)
+                .withFailureHandler(reject)
+                .getCustomRecipes();
+            });
+
+            if (recipes && recipes.length > 0) {
+              recipes.forEach((recipe) => {
+                HYPER_RECIPE[recipe.recipeName] = recipe.description;
+
+                const option = document.createElement("option");
+                option.value = recipe.recipeName;
+                option.textContent = recipe.recipeName;
+                recipeType.appendChild(option);
+              });
+              // showToast('Custom recipes loaded successfully', 'success');
+            }
+          } catch (error) {
+            showToast("Failed to load custom recipes", "error");
+            console.error("Error loading recipes:", error);
+          } finally {
+            // Remove loading state and show select
+            const loadingDiv = recipeType.parentNode.querySelector("div");
+            if (loadingDiv) loadingDiv.remove();
+            recipeType.style.display = "";
+          }
+        }
+      } catch (error) {
+        showToast("Error initializing application", "error");
+        console.error("Initialization error:", error);
+      }
+    });
+
+    // Function to fetch custom formulas from Firestore
+    function fetchCustomFormulas() {
+      google.script.run
+        .withSuccessHandler((response) => {
+          const customFormulas =
+            response.fields.customFormulas?.arrayValue?.values || [];
+          customFormulas.forEach((formula) => {
+            const formulaObj = {
+              formula: formula.mapValue.fields.formula.stringValue,
+              headers: formula.mapValue.fields.headers.arrayValue.values.map(
+                (header) => {
+                  const key = Object.keys(header.mapValue.fields)[0];
+                  return { [key]: header.mapValue.fields[key].stringValue };
+                }
+              ),
+              prompt: formula.mapValue.fields.prompt.stringValue,
+            };
+            addCustomFormulaToDropdown(formulaObj);
+          });
+        })
+        .getUserCustomFormulas(); // Call server-side function to get user custom formulas
+    }
+
+    // Add custom formula to dropdown with animation
+    function addCustomFormulaToDropdown(customFormula) {
+      try {
+        const formulaDropdown = document.getElementById("formula-dropdown");
+        if (!formulaDropdown) return;
+
+        const option = document.createElement("option");
+        option.value = customFormula.formula;
+        option.textContent = customFormula.formula;
+
+        // Add with fade-in animation
+        option.className = "opacity-0 transition-opacity duration-300";
+        formulaDropdown.appendChild(option);
+
+        // Trigger animation
+        setTimeout(() => option.classList.remove("opacity-0"), 50);
+
+        // showToast('New formula added successfully', 'success');
+      } catch (error) {
+        showToast("Failed to add new formula", "error");
+        console.error("Error adding formula:", error);
+      }
+    }
+    async function updateFormFields(event) {
+      const selectedFormula = event.target.value;
+      const headerInputs = document.getElementById("header-inputs");
+      const promptInput = document.getElementById("prompt");
+
+      try {
+        if (selectedFormula === "CREATE_CUSTOM_FORMULA") {
+          openModal(); // Ensure this function is defined and opens the modal
+          return;
+        }
+
+        // Find the formula data based on the selected option
+        const formulaData = FORMULAS.find(
+          (f) => f.formula === selectedFormula
+        );
+
+        if (formulaData) {
+          // Update the prompt
+          promptInput.value = formulaData.prompt;
+
+          // Clear existing header inputs
+          headerInputs.innerHTML = "";
+
+          // Populate header inputs
+          formulaData.headers.forEach((header, index) => {
+            headerInputs.innerHTML += `
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" 
+                               value="${String.fromCharCode(65 + index)}1" 
+                               class="w-9 p-1.5  border border-gray-200 rounded-md bg-white text-gray-700 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" 
+                               readonly>
+                        <input type="text" 
+                               value="${header}" 
+                               class="flex-1 p-1.5 border border-gray-200 rounded-md bg-white text-gray-700 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" 
+                               readonly>
+                    </div>
+                `;
+          });
+        } else {
+          fetchCustomFormulaData(selectedFormula);
+        }
+      } catch (error) {
+        showToast("Error updating form fields: " + error.message, "error");
+        console.error("Error updating fields:", error);
+      }
+    }
+
+    // Helper function to update form with formula data
+    async function fetchCustomFormulaData(formulaName) {
+      try {
+        // Fetch the custom formulas
+        const response = await new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)
+            .getUserCustomFormulas();
+        });
+
+        // Find the specific custom formula based on the name
+        const customFormula =
+          response.fields.customFormulas.arrayValue.values.find(
+            (f) => f.mapValue.fields.formula.stringValue === formulaName
+          );
+
+        if (!customFormula) {
+          throw new Error("Formula not found");
+        }
+
+        // Extract headers and prompt from the custom formula
+        const headers =
+          customFormula.mapValue.fields.headers.arrayValue.values.map(
+            (header) => {
+              const key = Object.keys(header.mapValue.fields)[0];
+              return { [key]: header.mapValue.fields[key].stringValue };
+            }
+          );
+
+        const promptInput = document.getElementById("prompt");
+        const headerInputs = document.getElementById("header-inputs");
+
+        // Update the prompt input
+        if (promptInput) {
+          promptInput.value =
+            customFormula.mapValue.fields.prompt.stringValue;
+        }
+
+        // Clear existing header inputs
+        if (headerInputs) {
+          headerInputs.innerHTML = ""; // Clear any previous headers
+
+          // Create header rows
+          const headerLabel = `<label class="block text-sm font-medium text-gray-700 mb-2">Headers</label>`;
+          const headerRows = headers
+            .map(
+              (header) => `
+                <div class="flex gap-2 mb-2">
+                    <input type="text" 
+                           value="${Object.keys(header)[0]}" 
+                           class="w-9 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200" readonly>
+                    <input type="text" 
+                           value="${header[Object.keys(header)[0]]}" 
+                           class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200" readonly>
+                </div>
+            `
+            )
+            .join("");
+
+          // Update header inputs with new content
+          headerInputs.innerHTML = headerLabel + headerRows;
+        }
+
+        // showToast('Formula loaded successfully', 'success');
+      } catch (error) {
+        showToast("Failed to load formula details", "error");
+        console.error("Error fetching formula data:", error);
+
+        // Reset form on error
+        const headerInputs = document.getElementById("header-inputs");
+        const promptInput = document.getElementById("prompt");
+        if (headerInputs) headerInputs.innerHTML = "";
+        if (promptInput) promptInput.value = "";
+      }
+    }
+
+    // Update the modal HTML to include backdrop click handling
+    function setupModalHandlers() {
+      const modal = document.getElementById("customFormulaModal");
+      if (!modal) return;
+
+      // Close modal when clicking outside
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Prevent clicks inside modal from closing it
+      modal.querySelector(".bg-white")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    function openModal() {
+      const modal = document.getElementById("customFormulaModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex"); // Assuming you want to display it as a flex container
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("customFormulaModal");
+      if (!modal) return;
+
+      // Add exit animations
+      const modalContent = modal.querySelector(".bg-white");
+      if (modalContent) {
+        modalContent.classList.add("opacity-0", "scale-95", "translate-y-4");
+        modalContent.classList.remove(
+          "opacity-100",
+          "scale-100",
+          "translate-y-0"
+        );
+      }
+      modal.classList.add("opacity-0");
+
+      // Remove event listener
+      modal.removeEventListener("click", handleModalBackdropClick);
+
+      // Hide modal after animation
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("opacity-0");
+        if (modalContent) {
+          modalContent.classList.remove(
+            "opacity-0",
+            "scale-95",
+            "translate-y-4"
+          );
+        }
+
+        // Reset forms
+        resetCustomFormulaSection();
+        resetDynamicPromptsForm();
+      }, 300);
+    }
+
+    // Handle clicking outside modal to close
+    function handleModalBackdropClick(event) {
+      if (event.target === event.currentTarget) {
+        closeModal();
+      }
+    }
+
+    function resetDynamicPromptsForm() {
+      document.getElementById("prompt").value = "";
+      document.getElementById("header-inputs").innerHTML = "";
+      document.getElementById("formula-dropdown").value = "";
+    }
+
+    // Reset custom formula section with animation
+    function resetCustomFormulaSection() {
+      try {
+        const nameInput = document.getElementById("custom-formula-name");
+        const promptInput = document.getElementById("custom-prompt");
+        const headersContainer = document.getElementById(
+          "custom-headers-inputs"
+        );
+
+        if (nameInput) nameInput.value = "";
+        if (promptInput) promptInput.value = "";
+
+        if (headersContainer) {
+          // Fade out existing content
+          headersContainer.classList.add("opacity-0");
+
+          setTimeout(() => {
+            headersContainer.innerHTML = `
+                    <div class="opacity-0 transition-opacity duration-300">
+                        <div class="flex gap-2">
+                            <input type="text" 
+                                   value="A1" 
+                                    class="w-9 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+                                   required>
+                            <input type="text" 
+                                   placeholder="Header1" 
+                                              class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200"
+                                   required>
+                            <button type="button" 
+                                    onclick="addHeaderInput()"
+                                     class="px-1 py-1.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200">
+      <svg class="w-3.5 h-3.5 transform group-hover:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            // Fade in new content
+            setTimeout(() => {
+              const newContent = headersContainer.querySelector("div");
+              if (newContent) newContent.classList.remove("opacity-0");
+            }, 50);
+          }, 300);
+        }
+      } catch (error) {
+        showToast("Error resetting form", "error");
+        console.error("Error in resetCustomFormulaSection:", error);
+      }
+    }
+
+    // Dynamic prompts form submission with improved handling
+    document
+      .getElementById("dynamic-prompts-form")
+      ?.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const generateButton = document.getElementById("generate-button");
+
+        try {
+          // Update button to loading state
+          setButtonLoading(generateButton, true, "Generating...");
+
+          const formData = {
+            prompt: document.getElementById("prompt").value,
+            tone: document.getElementById("tone-dropdown").value,
+            model: document.getElementById("model-dropdown").value,
+            destColumn: document.getElementById("dest-column").value,
+            startRow: document.getElementById("start-row").value,
+            endRow: document.getElementById("end-row").value,
+          };
+
+          // // Validate form data
+          // if (!validateFormData(formData)) {
+          //     throw new Error('Please fill in all required fields');
+          // }
+
+          // Collect header inputs
+          const headerObject = await collectHeaderInputs();
+
+          if (!headerObject) {
+            throw new Error(
+              "No header inputs found. Please ensure headers are defined."
+            );
+          }
+
+          // Update headers
+          await updateHeaders(headerObject);
+
+          // Generate prompts
+          await generatePrompts(formData);
+
+          // Success handling
+          showToast("Dynamic prompt generated successfully!", "success");
+          await resetForm();
+        } catch (error) {
+          showToast(error.message || "Error generating prompt", "error");
+          console.error("Form submission error:", error);
+        } finally {
+          setButtonLoading(generateButton, false, "Generate");
+        }
+      });
+
+    // function validateFormData(data) {
+    //     const required = ['prompt', 'tone', 'model', 'destColumn', 'startRow'];
+    //     return required.every(field => data[field]?.trim());
+    // }
+
+    async function collectHeaderInputs() {
+      const headerInputs = document.querySelectorAll(
+        "#dynamic-prompts-form .flex"
+      );
+      if (!headerInputs.length) return null;
+
+      const headerObject = {};
+      headerInputs.forEach((row) => {
+        const column = row.querySelector('input[type="text"]')?.value;
+        const header = row.querySelector(
+          'input[type="text"]:nth-child(2)'
+        )?.value;
+        if (column && header) {
+          headerObject[column] = header;
+        }
+      });
+
+      return Object.keys(headerObject).length ? headerObject : null;
+    }
+
+    function updateHeaders(headerObject) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .updateHeaders(headerObject);
+      });
+    }
+
+    function generatePrompts(formData) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .generateMultipleDynamicPrompts(
+            formData.prompt,
+            formData.tone,
+            formData.model,
+            "",
+            formData.destColumn,
+            formData.startRow,
+            formData.endRow
+          );
+      });
+    }
+
+    async function resetForm() {
+      const form = document.getElementById("dynamic-prompts-form");
+      if (!form) return;
+
+      // Add fade-out animation
+      form.classList.add("opacity-0");
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      form.reset();
+      document.getElementById("header-inputs").innerHTML = "";
+
+      // Fade back in
+      form.classList.remove("opacity-0");
+    }
+    // Custom formula button click handler
+    document
+      .getElementById("create-custom-formula-button")
+      ?.addEventListener("click", async function () {
+        // Get button reference
+        const button = this;
+
+        try {
+          // Set loading state
+          setButtonLoading(button, true, "Creating Formula...");
+
+          // Get form data with validation
+          const formData = await getFormulaFormData();
+
+          // Create formula
+          await createCustomFormula(formData);
+
+          // Success handling
+          showToast("Formula created successfully!", "success");
+          await fetchCustomFormulas();
+          closeModalWithAnimation();
+        } catch (error) {
+          showToast(error.message || "Error creating formula", "error");
+          console.error("Error creating formula:", error);
+        } finally {
+          setButtonLoading(button, false, "Create Formula");
+        }
+      });
+
+    // Helper function to set button loading state
+    function setButtonLoading(button, isLoading, label = "") {
+      if (!button) return;
+
+      if (isLoading) {
+        button.disabled = true;
+        button.classList.add("opacity-75", "cursor-not-allowed");
+        button.innerHTML = `
+            <div class="flex items-center justify-center">
+                <svg class="animate-spin h-4 w-4 text-white mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                </svg>
+                ${label}
+            </div>
+        `;
+      } else {
+        button.disabled = false;
+        button.classList.remove("opacity-75", "cursor-not-allowed");
+        button.innerHTML = `
+            <span class="flex items-center justify-center">
+                ${label}
+                <svg class="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </span>
+        `;
+      }
+    }
+
+    // Get and validate form data
+    async function getFormulaFormData() {
+      const formulaName = document
+        .getElementById("custom-formula-name")
+        ?.value.trim();
+      const prompt = document.getElementById("custom-prompt")?.value.trim();
+      const headers = Array.from(
+        document.querySelectorAll("#custom-headers-inputs .flex")
+      ).map((row) => ({
+        [row.querySelector('input[type="text"]')?.value || ""]:
+          row.querySelector('input[type="text"]:nth-child(2)')?.value || "",
+      }));
+
+      // Validate data
+      if (!formulaName) throw new Error("Formula name is required");
+      if (!prompt) throw new Error("Prompt is required");
+      if (
+        !headers.length ||
+        !headers.some((header) => Object.values(header)[0])
+      ) {
+        throw new Error("At least one header is required");
+      }
+
+      return { formula: formulaName, headers, prompt };
+    }
+
+    // Create custom formula
+    function createCustomFormula(customFormula) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .createCustomFormula(customFormula);
+      });
+    }
+
+    // Add header input with animation
+    function addHeaderInput() {
+      const container = document.getElementById("custom-headers-inputs");
+      if (!container) return;
+
+      const headerCount = container.children.length;
+      const div = document.createElement("div");
+      div.className =
+        "flex gap-2 opacity-0 transform translate-y-2 transition-all duration-300";
+
+      div.innerHTML = `
+        <input type="text" 
+               value="${String.fromCharCode(65 + headerCount)}1" 
+               class="w-9 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200" 
+           required>
+        <input type="text" 
+               placeholder="Header" 
+               class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200" 
+           required>
+        <button type="button" 
+                onclick="removeHeaderInput(this)"
+                 class="px-1 py-1.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200">
+      <svg class="w-3.5 h-3.5 transform group-hover:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+        </button>
+    `;
+
+      container.appendChild(div);
+
+      // Trigger entrance animation
+      requestAnimationFrame(() => {
+        div.classList.remove("opacity-0", "translate-y-2");
+      });
+    }
+    // Close modal with animation
+    function closeModalWithAnimation() {
+      const modal = document.getElementById("customFormulaModal");
+      if (!modal) return;
+
+      // Add exit animation
+      const modalContent = modal.querySelector(".bg-white");
+      if (modalContent) {
+        modalContent.classList.add("scale-95", "opacity-0");
+      }
+      modal.classList.add("opacity-0");
+
+      // Remove modal after animation
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        // Reset animations
+        if (modalContent) {
+          modalContent.classList.remove("scale-95", "opacity-0");
+        }
+        modal.classList.remove("opacity-0");
+      }, 300);
+    }
+    // Remove header input with animation
+    function removeHeaderInput(button) {
+      const row = button.parentElement;
+      if (!row) return;
+
+      // Add exit animation
+      row.classList.add("opacity-0", "scale-95", "-translate-y-2");
+
+      // Remove after animation
+      setTimeout(() => {
+        row.remove();
+        reorderHeaders();
+      }, 300);
+    }
+
+    // Reorder remaining headers after removal
+    function reorderHeaders() {
+      const container = document.getElementById("custom-headers-inputs");
+      if (!container) return;
+
+      Array.from(container.children).forEach((row, index) => {
+        const columnInput = row.querySelector(
+          'input[type="text"]:first-child'
+        );
+        if (columnInput) {
+          columnInput.value = `${String.fromCharCode(65 + index)}1`;
+        }
+      });
+    }
+
+    // Update credits display
+    async function updateCreditsDisplay() {
+      const creditsElement = document.getElementById("credits");
+      if (!creditsElement) return;
+
+      // Directly set the credits text
+      creditsElement.textContent = `You have <?= credits ?> credits.`;
+      creditsElement.className =
+        "mt-2 inline-flex items-center px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium";
+    }
+
+    // Tab switching with animations
+    function setupTabs() {
+      const tabs = {
+        docs: {
+          tab: document.getElementById("docs-tab"),
+          section: document.getElementById("docs-section"),
+        },
+        prompts: {
+          tab: document.getElementById("dynamic-prompts-tab"),
+          section: document.getElementById("dynamic-prompts-section"),
+        },
+      };
+
+      function switchTab(activeTab, inactiveTab) {
+        if (
+          !activeTab.tab ||
+          !activeTab.section ||
+          !inactiveTab.tab ||
+          !inactiveTab.section
+        )
+          return;
+
+        // Update tab styles
+        activeTab.tab.classList.add(
+          "text-emerald-500",
+          "border-b-2",
+          "border-emerald-500"
+        );
+        inactiveTab.tab.classList.remove(
+          "text-emerald-500",
+          "border-b-2",
+          "border-emerald-500"
+        );
+
+        // Animate sections
+        inactiveTab.section.classList.add("opacity-0", "scale-95");
+        setTimeout(() => {
+          inactiveTab.section.classList.add("hidden");
+          activeTab.section.classList.remove("hidden");
+          requestAnimationFrame(() => {
+            activeTab.section.classList.remove("opacity-0", "scale-95");
+          });
+        }, 300);
+      }
+
+      // Add click listeners
+      tabs.docs.tab?.addEventListener("click", () =>
+        switchTab(tabs.docs, tabs.prompts)
+      );
+      tabs.prompts.tab?.addEventListener("click", () =>
+        switchTab(tabs.prompts, tabs.docs)
+      );
+    }
+
+    // Reset hyper form with animations
+    function resetHyperForm() {
+      const elements = {
+        recipeType: document.getElementById("recipe-type"),
+        copyDescription: document.getElementById("copy-description"),
+        sections: {
+          "recipe-description": true,
+          "parameters-section": true,
+          "row-inputs-section": true,
+          "generate-hyper": true,
+        },
+        inputs: {
+          "hyper-start-row": "",
+          "hyper-end-row": "",
+        },
+      };
+
+      // Reset select with animation
+      if (elements.recipeType) {
+        elements.recipeType.classList.add("opacity-50");
+        setTimeout(() => {
+          elements.recipeType.value = "";
+          elements.recipeType.classList.remove("opacity-50");
+        }, 300);
+      }
+
+      // Reset description with animation
+      if (elements.copyDescription) {
+        elements.copyDescription.classList.add("opacity-50");
+        setTimeout(() => {
+          elements.copyDescription.value = "";
+          elements.copyDescription.classList.remove("opacity-50");
+        }, 300);
+      }
+
+      // Hide sections with animation
+      Object.entries(elements.sections).forEach(([id, shouldClear]) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.classList.add("opacity-0", "scale-95");
+          setTimeout(() => {
+            element.classList.add("hidden");
+            if (shouldClear && id === "parameters-section") {
+              const container = document.getElementById(
+                "parameters-container"
+              );
+              if (container) {
+                container.innerHTML = "";
+              }
+            }
+          }, 300);
+        }
+      });
+
+      // Reset input values with animation
+      Object.entries(elements.inputs).forEach(([id, value]) => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.classList.add("opacity-50");
+          setTimeout(() => {
+            input.value = value;
+            input.classList.remove("opacity-50");
+          }, 300);
+        }
+      });
+    }
+
+    let HYPER_RECIPE = {
+      Appreciate_mission_statement: `Hi [firstName], how are you? 
+      {"Appriciate mission statement from website"}`,
+      Highlight_pain_point_industry: `Hi [firstName], how are you? 
+{"Highlight pain points from website"}`,
+    };
+    // Setup all event listeners with improved handling
+    function setupEventListeners() {
+      // Integration type change
+      document
+        .getElementById("integration-type")
+        ?.addEventListener("change", async function () {
+          const loadingOverlay = document.createElement("div");
+          loadingOverlay.className =
+            "absolute inset-0 bg-white/50 flex items-center justify-center transition-opacity duration-200";
+          loadingOverlay.innerHTML = `
+       <div class="flex flex-col items-center space-y-2">
+           <svg class="animate-spin h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24">
+               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+           </svg>
+           <span class="text-xs text-gray-500">Loading...</span>
+       </div>
+   `;
+
+          try {
+            const selectedForm = document.getElementById(
+              `${this.value}-form`
+            );
+            const emptyState = document.getElementById(
+              "empty-state-description"
+            );
+
+            // Add loading overlay with fade-in
+            if (this.value) {
+              loadingOverlay.style.opacity = "0";
+              this.parentElement?.appendChild(loadingOverlay);
+              requestAnimationFrame(() => {
+                loadingOverlay.style.opacity = "1";
+              });
+            }
+
+            // Hide all forms with fade-out
+            await hideAllFormsWithAnimation();
+            await resetHyperForm();
+
+            if (this.value && selectedForm) {
+              // Hide empty state with animation
+              if (emptyState) {
+                emptyState.classList.add(
+                  "opacity-0",
+                  "transform",
+                  "scale-95"
+                );
+                setTimeout(() => {
+                  emptyState.classList.add("hidden");
+                }, 300);
+              }
+
+              // Show selected form with fade-in
+              selectedForm.classList.remove("hidden");
+              selectedForm.classList.add("opacity-0", "scale-95");
+              requestAnimationFrame(() => {
+                selectedForm.classList.remove("opacity-0", "scale-95");
+              });
+            } else {
+              // Show empty state with animation
+              if (emptyState) {
+                emptyState.classList.remove("hidden");
+                requestAnimationFrame(() => {
+                  emptyState.classList.remove(
+                    "opacity-0",
+                    "transform",
+                    "scale-95"
+                  );
+                });
+              }
+            }
+          } catch (error) {
+            showToast("Error changing integration type", "error");
+            console.error("Integration type change error:", error);
+          } finally {
+            // Remove loading overlay with fade-out
+            if (loadingOverlay && this.value) {
+              loadingOverlay.style.opacity = "0";
+              setTimeout(() => {
+                loadingOverlay.remove();
+              }, 200);
+            }
+          }
+        });
+
+      // Hyper type change
+      document
+        .getElementById("hyper-type")
+        ?.addEventListener("change", async function () {
+          try {
+            const recipeSection = document.getElementById("recipe-section");
+            await resetHyperForm();
+
+            if (recipeSection) {
+              if (this.value) {
+                recipeSection.classList.remove("hidden");
+                recipeSection.classList.add("opacity-0", "scale-95");
+                requestAnimationFrame(() => {
+                  recipeSection.classList.remove("opacity-0", "scale-95");
+                });
+              } else {
+                recipeSection.classList.add("opacity-0", "scale-95");
+                setTimeout(() => {
+                  recipeSection.classList.add("hidden");
+                }, 300);
+              }
+            }
+          } catch (error) {
+            showToast("Error changing hyper type", "error");
+            console.error("Hyper type change error:", error);
+          }
+        });
+
+      // Recipe type change with loading state
+      document
+        .getElementById("recipe-type")
+        ?.addEventListener("change", async function () {
+          const selectedValue = this.value;
+
+          // If 'create-custom-recipe' is selected, directly open modal
+          if (selectedValue === "create-custom-recipe") {
+            const modal = document.getElementById("custom-recipe-modal");
+            if (modal) {
+              // Remove hidden class first
+              modal.classList.remove("hidden");
+
+              // Get modal content
+              const modalContent = modal.querySelector(".bg-white");
+              if (modalContent) {
+                // Set initial state for animation
+                modalContent.classList.add("opacity-0", "scale-95");
+
+                // Force reflow
+                void modal.offsetWidth;
+
+                // Trigger animation
+                requestAnimationFrame(() => {
+                  modalContent.classList.remove("opacity-0", "scale-95");
+                });
+              }
+            } else {
+              console.error("Custom recipe modal not found");
+            }
+            return;
+          }
+
+          // For other selections, show loading and proceed normally
+          const loadingOverlay = document.createElement("div");
+          loadingOverlay.className =
+            "absolute inset-0 bg-white/50 flex items-center justify-center transition-opacity duration-200";
+          loadingOverlay.innerHTML = `
+       <div class="flex flex-col items-center space-y-2">
+           <svg class="animate-spin h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24">
+               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+           </svg>
+           <span class="text-xs text-gray-500">Loading...</span>
+       </div>
+   `;
+
+          try {
+            // Add loading overlay with fade-in
+            loadingOverlay.style.opacity = "0";
+            this.parentElement?.appendChild(loadingOverlay);
+            requestAnimationFrame(() => {
+              loadingOverlay.style.opacity = "1";
+            });
+
+            // Handle the recipe type change
+            await handleRecipeTypeChange(selectedValue);
+          } catch (error) {
+            showToast("Error changing recipe type", "error");
+            console.error("Recipe type change error:", error);
+          } finally {
+            // Remove loading overlay with fade-out
+            loadingOverlay.style.opacity = "0";
+            setTimeout(() => {
+              loadingOverlay.remove();
+            }, 200);
+          }
+        });
+
+      // Generate button with improved feedback
+      document
+        .getElementById("generate-hyper")
+        ?.addEventListener("click", async function () {
+          const originalContent = this.innerHTML;
+          this.innerHTML = `
+                <div class="flex items-center justify-center">
+                    <svg class="animate-spin h-4 w-4 text-white mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                    </svg>
+                    Generating...
+                </div>
+            `;
+          try {
+            // Disable button and show loading state
+            this.disabled = true;
+
+            const formData = {
+              recipe: document.getElementById("recipe-type")?.value,
+              description: document.getElementById("copy-description")?.value,
+              startRow: document.getElementById("hyper-start-row")?.value,
+              endRow: document.getElementById("hyper-end-row")?.value || null,
+            };
+
+            if (!formData.startRow) {
+              alert("Please enter a Start Row value");
+              resetButtonState(button);
+              return;
+            }
+            // await generateContent(data);
+            // showToast('Content generated successfully!', 'success');
+          } catch (error) {
+            showToast(error.message || "Error generating content", "error");
+            console.error("Generate error:", error);
+          } finally {
+            // Reset button state
+            this.disabled = false;
+            this.innerHTML = originalContent;
+          }
+        });
+
+      // Modal handling with animations
+      setupModalListeners();
+    }
+
+    function setupModalListeners() {
+      // Get modal elements
+      const modals = {
+        customFormula: document.getElementById("customFormulaModal"),
+        customRecipe: document.getElementById("custom-recipe-modal"),
+      };
+
+      Object.entries(modals).forEach(([key, modal]) => {
+        if (!modal) return;
+
+        // Handle clicks outside modal
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            if (key === "customFormula") {
+              closeModal();
+            } else {
+              closeCustomRecipeModal();
+            }
+          }
+        });
+
+        // Prevent clicks inside modal from closing it
+        modal.querySelector(".bg-white")?.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+
+        // Add click listeners to close buttons
+        modal
+          .querySelectorAll('.close, .close-modal, [data-dismiss="modal"]')
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              if (key === "customFormula") {
+                closeModal();
+              } else {
+                closeCustomRecipeModal();
+              }
+            });
+          });
+      });
+
+      // Add escape key handler
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (!modals.customFormula?.classList.contains("hidden")) {
+            closeModal();
+          }
+          if (!modals.customRecipe?.classList.contains("hidden")) {
+            closeCustomRecipeModal();
+          }
+        }
+      });
+
+      // Add animation end listeners
+      Object.values(modals).forEach((modal) => {
+        if (!modal) return;
+
+        modal.addEventListener("transitionend", (e) => {
+          // Only handle transitions on the modal itself, not children
+          if (e.target === modal && modal.classList.contains("opacity-0")) {
+            modal.classList.add("hidden");
+          }
+        });
+
+        // Add transition classes if not already present
+        modal.classList.add("transition-all", "duration-300", "ease-in-out");
+        const modalContent = modal.querySelector(".bg-white");
+        if (modalContent) {
+          modalContent.classList.add(
+            "transition-all",
+            "duration-300",
+            "ease-in-out"
+          );
+        }
+      });
+
+      // Add close button hover effects
+      document.querySelectorAll(".close, .close-modal").forEach((button) => {
+        button.classList.add(
+          "transform",
+          "transition-all",
+          "duration-200",
+          "hover:rotate-90"
+        );
+      });
+    }
+    // Hide all forms with animation
+    async function hideAllFormsWithAnimation() {
+      const forms = [
+        "ai-apis-form",
+        "hyper-apis-form",
+        "data-enrichment-form",
+        "data-integration-form",
+      ];
+
+      const hidePromises = forms.map((id) => {
+        const form = document.getElementById(id);
+        if (!form || form.classList.contains("hidden"))
+          return Promise.resolve();
+
+        return new Promise((resolve) => {
+          form.classList.add("opacity-0", "scale-95");
+          setTimeout(() => {
+            form.classList.add("hidden");
+            form.classList.remove("opacity-0", "scale-95");
+            resolve();
+          }, 300);
+        });
+      });
+
+      await Promise.all(hidePromises);
+    }
+
+    // Handle recipe type change with animations
+    async function handleRecipeTypeChange(value) {
+      const elements = {
+        description: document.getElementById("recipe-description"),
+        parameters: document.getElementById("parameters-section"),
+        copy: document.getElementById("copy-description"),
+        rowInputs: document.getElementById("row-inputs-section"),
+        generate: document.getElementById("generate-hyper"),
+      };
+
+      try {
+        if (value === "create-custom-recipe") {
+          // First hide all elements
+          await hideElementsWithAnimation(Object.values(elements));
+
+          // Then open the custom recipe modal with animation
+          const modal = document.getElementById("custom-recipe-modal");
+          if (modal) {
+            // Remove hidden class first
+            modal.classList.remove("hidden");
+
+            // Get modal content
+            const modalContent = modal.querySelector(".bg-white");
+            if (modalContent) {
+              // Set initial state for animation
+              modalContent.classList.add("opacity-0", "scale-95");
+              modal.classList.add("opacity-0");
+
+              // Force reflow
+              void modal.offsetWidth;
+
+              // Trigger animation
+              requestAnimationFrame(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("opacity-0", "scale-95");
+              });
+            }
+          }
+        } else if (value) {
+          // Show elements with fade-in
+          await showElementsWithAnimation(elements);
+
+          if (elements.copy) {
+            elements.copy.value = HYPER_RECIPE[value] || "";
+            elements.copy.classList.add("highlight-update");
+            setTimeout(
+              () => elements.copy.classList.remove("highlight-update"),
+              1000
+            );
+          }
+
+          await fetchAndDisplayHeaders(elements);
+        } else {
+          await hideElementsWithAnimation(Object.values(elements));
+        }
+      } catch (error) {
+        showToast("Error updating form", "error");
+        console.error("Recipe type change error:", error);
+      }
+    }
+
+    // Fetch and display headers with loading state
+    async function fetchAndDisplayHeaders(elements) {
+      const loadingOverlay = createLoadingOverlay();
+      elements.parameters?.appendChild(loadingOverlay);
+
+      try {
+        const headers = await new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)
+            .getCurrentSheetHeaders();
+        });
+
+        if (headers && Object.keys(headers).length > 0) {
+          const headersWithOutput = {
+            ...headers,
+            Z1: "Generated Response",
+          };
+
+          await displayParameters(headersWithOutput);
+          setupGenerateButton(headersWithOutput);
+
+          // Show sections with animation
+          await showElementsWithAnimation([
+            elements.parameters,
+            elements.rowInputs,
+            elements.generate,
+          ]);
+        } else {
+          handleNoHeaders(elements);
+        }
+      } catch (error) {
+        showToast("Error fetching headers", "error");
+        console.error("Error fetching headers:", error);
+        await hideElementsWithAnimation(Object.values(elements));
+        await resetHyperForm();
+      } finally {
+        loadingOverlay.remove();
+      }
+    }
+
+    // Hide elements with smooth fade-out animation
+    async function hideElementsWithAnimation(elements) {
+      const hidePromises = elements.map((element) => {
+        if (!element || element.classList.contains("hidden")) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+          // Add transition classes
+          element.classList.add(
+            "opacity-0",
+            "scale-95",
+            "transition-all",
+            "duration-300"
+          );
+
+          // Wait for animation to complete
+          setTimeout(() => {
+            element.classList.add("hidden");
+            // Remove animation classes
+            element.classList.remove("opacity-0", "scale-95");
+            resolve();
+          }, 300);
+        });
+      });
+
+      await Promise.all(hidePromises);
+    }
+
+    // Show elements with smooth fade-in animation
+    async function showElementsWithAnimation(elements) {
+      // If elements is an object, convert to array
+      const elementArray = Array.isArray(elements)
+        ? elements
+        : Object.values(elements);
+
+      const showPromises = elementArray.map((element, index) => {
+        if (!element || !element.classList.contains("hidden")) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+          // First make element visible but transparent
+          element.classList.remove("hidden");
+          element.classList.add(
+            "opacity-0",
+            "scale-95",
+            "transition-all",
+            "duration-300"
+          );
+
+          // Force browser reflow
+          void element.offsetWidth;
+
+          // Delay each element slightly for staggered effect
+          setTimeout(() => {
+            // Start fade-in animation
+            element.classList.remove("opacity-0", "scale-95");
+
+            // Resolve after animation completes
+            setTimeout(resolve, 300);
+          }, index * 50); // Stagger each element by 50ms
+        });
+      });
+
+      await Promise.all(showPromises);
+    }
+
+    // Helper function to create loading overlay
+    function createLoadingOverlay() {
+      const overlay = document.createElement("div");
+      overlay.className =
+        "absolute inset-0 bg-white/50 flex items-center justify-center transition-opacity duration-300";
+      overlay.innerHTML = `
+        <div class="flex flex-col items-center space-y-2">
+            <svg class="animate-spin h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Loading...</span>
+        </div>
+    `;
+      return overlay;
+    }
+    function setupGenerateButton(headers) {
+      const generateBtn = document.getElementById("generate-hyper");
+      if (generateBtn) {
+        generateBtn.innerHTML = `
+            <span class="flex items-center justify-center group">
+                Generate
+                <svg class="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </span>
+        `;
+        generateBtn.onclick = async function () {
+          await handleGenerate(this, headers);
+        };
+      }
+    }
+    async function handleGenerate(button, headers) {
+      try {
+        // Set loading state
+        setButtonLoading(button, true, "Generating...");
+
+        // Get fresh headers from the inputs
+        const freshHeaders = {};
+        const inputs = document.querySelectorAll('#parameters-container input');
+        for (let i = 0; i < inputs.length; i += 2) {
+          freshHeaders[inputs[i].value] = inputs[i + 1].value;
+        }
+
+        alert(JSON.stringify(freshHeaders));
+
+        // Get column references
+        const colRefs = getColumnReferences(freshHeaders);
+
+        // Validate form data
+        const formData = await getFormData();
+        validateFormData(formData);
+
+        // Generate recipe and wait for the result
+        await callHyperRecipe(formData, colRefs);
+
+        // Show success message after successful generation
+        showToast("Recipe generated successfully!", "success");
+        await resetHyperForm();
+      } catch (error) {
+        showToast(error.message || "Error generating recipe", "error");
+        console.error("Generate error:", error);
+      } finally {
+        setButtonLoading(button, false, "Generate");
+      }
+    }
+
+    async function getFormData() {
+      // Get the value from the textarea
+      const descriptionText =
+        document.getElementById("copy-description")?.value || "";
+
+      // Use a regular expression to find all occurrences of text within curly brackets
+      const matches = [...descriptionText.matchAll(/\{(.*?)\}/g)];
+
+      // Extract the matched groups and join them into a comma-separated string
+      const extractedDescriptions = matches
+        .map((match) => match[1])
+        .join(", ");
+
+      // Return the form data with the updated description
+      return {
+        recipe: document.getElementById("recipe-type")?.value,
+        description: extractedDescriptions, // Use the extracted descriptions here
+        startRow: document.getElementById("hyper-start-row")?.value,
+        endRow: document.getElementById("hyper-end-row")?.value || null,
+      };
+    }
+
+    function validateFormData(formData) {
+      if (!formData.startRow) {
+        throw new Error("Please enter a Start Row value");
+      }
+      if (!formData.recipe) {
+        throw new Error("Please select a recipe");
+      }
+      if (!formData.description) {
+        throw new Error("Description is required");
+      }
+    }
+
+    function getColumnReferences(headers) {
+      return {
+        website:
+          Object.entries(headers).find(([_, value]) =>
+            value.toLowerCase().includes("website")
+          )?.[0] || "A1",
+        response:
+          Object.entries(headers).find(([_, value]) =>
+            value.toLowerCase().includes("response")
+          )?.[0] || "Z1",
+      };
+    }
+
+    async function callHyperRecipe(formData, colRefs) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((response) => {
+            if (response.startsWith("Success")) {
+              resolve(response);
+            } else {
+              reject(new Error(response));
+            }
+          })
+          .withFailureHandler(reject)
+          .callHyperRecipe(
+            formData.recipe,
+            formData.description,
+            colRefs.website,
+            colRefs.response,
+            parseInt(formData.startRow),
+            formData.endRow ? parseInt(formData.endRow) : null
+          );
+      });
+    }
+
+    function handleNoHeaders(elements) {
+      if (!elements.parameters) return;
+
+      // Add fade-out animation
+      elements.parameters.classList.add("opacity-0", "scale-95");
+
+      setTimeout(() => {
+        elements.parameters.classList.add("hidden");
+        const container = document.getElementById("parameters-container");
+        if (container) {
+          container.innerHTML = `
+                <div class="p-4 bg-gray-50 rounded-md opacity-0 transform transition-all duration-300">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">No Headers Found</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Please add headers to your sheet first.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+          // Trigger fade-in animation
+          requestAnimationFrame(() => {
+            const notice = container.querySelector("div");
+            notice.classList.remove("opacity-0");
+            notice.classList.add("opacity-100");
+          });
+        }
+      }, 300);
+    }
+    // Display parameters with animation and loading state
+    async function displayParameters(headers) {
+      const container = document.getElementById("parameters-container");
+      if (!container) return;
+
+      // Add loading state
+      container.innerHTML = `
+       <div class="flex items-center justify-center p-4">
+           <svg class="animate-spin h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24">
+               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+           </svg>
+           <span class="ml-2 text-sm text-gray-500">Loading parameters...</span>
+       </div>
+   `;
+
+      // Create parameter rows with staggered animation
+      setTimeout(() => {
+        container.innerHTML = "";
+        Object.entries(headers).forEach(([colRef, headerName], index) => {
+          const row = document.createElement("div");
+          row.className =
+            "flex gap-2 mb-2 opacity-0 transform translate-y-2 transition-all duration-300";
+          row.innerHTML = `
+               <input type="text" 
+                      value="${colRef}" 
+                      class="w-16 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200">
+               <input type="text" 
+                      value="${headerName}" 
+                      class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors duration-200">
+           `;
+          container.appendChild(row);
+
+          // Trigger entrance animation with delay
+          setTimeout(() => {
+            row.classList.remove("opacity-0", "translate-y-2");
+          }, index * 100);
+        });
+      }, 500);
+    }
+
+    // Modal functions with animations
+    function openCustomRecipeModal() {
+      const modal = document.getElementById("custom-recipe-modal");
+      if (!modal) return;
+
+      // Show modal with animation
+      modal.classList.remove("hidden");
+      modal.classList.add("opacity-0");
+      const modalContent = modal.querySelector(".bg-white");
+
+      if (modalContent) {
+        modalContent.classList.add("scale-95");
+        requestAnimationFrame(() => {
+          modal.classList.remove("opacity-0");
+          modalContent.classList.remove("scale-95");
+        });
+      }
+    }
+
+    function closeCustomRecipeModal() {
+      const modal = document.getElementById("custom-recipe-modal");
+      if (!modal) return;
+
+      // Add exit animation
+      modal.classList.add("opacity-0");
+      const modalContent = modal.querySelector(".bg-white");
+
+      if (modalContent) {
+        modalContent.classList.add("scale-95");
+      }
+
+      // Reset form with animation
+      const nameInput = document.getElementById("custom-recipe-name");
+      const descriptionInput = document.getElementById(
+        "custom-recipe-description"
+      );
+
+      if (nameInput) {
+        nameInput.classList.add("opacity-50");
+        nameInput.value = "";
+      }
+      if (descriptionInput) {
+        descriptionInput.classList.add("opacity-50");
+        descriptionInput.value = "";
+      }
+
+      // Hide modal after animation
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("opacity-0");
+        if (modalContent) {
+          modalContent.classList.remove("scale-95");
+        }
+        if (nameInput) nameInput.classList.remove("opacity-50");
+        if (descriptionInput) descriptionInput.classList.remove("opacity-50");
+      }, 300);
+    }
+
+    // Handle custom recipe creation with improved feedback
+    async function handleCustomRecipeCreation() {
+      const createButton = document.getElementById("create-recipe-btn");
+      if (!createButton) return;
+
+      try {
+        // Validate inputs
+        const formData = await getRecipeFormData();
+
+        // Show loading state
+        setButtonLoading(createButton, true, "Creating...");
+
+        // Create recipe
+        const result = await createRecipe(formData);
+
+        if (result) {
+          HYPER_RECIPE[formData.name] = formData.description;
+          await addRecipeToDropdownWithAnimation(formData.name);
+          closeCustomRecipeModal();
+          showToast("Recipe created successfully!", "success");
+        }
+      } catch (error) {
+        showToast(error.message || "Error creating recipe", "error");
+        console.error("Recipe creation error:", error);
+      } finally {
+        setButtonLoading(createButton, false, "Create");
+      }
+    }
+
+    // Get and validate recipe form data
+    function getRecipeFormData() {
+      const name = document
+        .getElementById("custom-recipe-name")
+        ?.value.trim();
+      const description = document
+        .getElementById("custom-recipe-description")
+        ?.value.trim();
+
+      if (!name) throw new Error("Recipe name is required");
+      if (!description) throw new Error("Recipe description is required");
+
+      return { name, description };
+    }
+
+    // Create recipe API call
+    function createRecipe(recipeData) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .createCustomRecipe({
+            recipeName: recipeData.name,
+            description: recipeData.description,
+          });
+      });
+    }
+
+    // Add recipe to dropdown with animation
+    async function addRecipeToDropdownWithAnimation(name) {
+      const recipeDropdown = document.getElementById("recipe-type");
+      if (!recipeDropdown) return;
+
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      option.className =
+        "opacity-0 transform translate-y-2 transition-all duration-300";
+
+      recipeDropdown.appendChild(option);
+
+      // Trigger animation
+      requestAnimationFrame(() => {
+        option.classList.remove("opacity-0", "translate-y-2");
+      });
+    }
+
+    // Define the placeholders
+    const placeholders = [
+      "Appreciate mission statement of the company",
+      "Highligh the core values of the company",
+      "Highligh painpoints of the company",
+      "Provide products and services of the company",
+      "Appreciate the vision of the company",
+    ];
+
+    // Get the elements
+    const textarea = document.getElementById("custom-recipe-description");
+    const suggestionsContainer = document.getElementById(
+      "suggestions-container"
+    );
+
+    // Track the current cursor position and content
+    let lastCursorPosition = 0;
+    let currentBracketContent = "";
+
+    // Function to show suggestions
+    function showSuggestions(suggestions) {
+      suggestionsContainer.innerHTML = suggestions
+        .map(
+          (suggestion) => `
+        <div class="suggestion-item px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 cursor-pointer transition-colors duration-150">
+            ${suggestion}
+        </div>
+    `
+        )
+        .join("");
+
+      suggestionsContainer.classList.remove("hidden");
+
+      // Add click handlers to suggestions
+      const suggestionItems =
+        suggestionsContainer.querySelectorAll(".suggestion-item");
+      suggestionItems.forEach((item) => {
+        item.addEventListener("click", () =>
+          selectSuggestion(item.textContent.trim())
+        );
+      });
+    }
+
+    // Function to hide suggestions
+    function hideSuggestions() {
+      suggestionsContainer.classList.add("hidden");
+      suggestionsContainer.innerHTML = "";
+    }
+
+    // Function to select a suggestion
+    function selectSuggestion(suggestion) {
+      const text = textarea.value;
+      const beforeCursor = text.substring(0, lastCursorPosition);
+      const afterCursor = text.substring(lastCursorPosition);
+
+      // Find the last opening curly brace
+      const lastOpenBrace = beforeCursor.lastIndexOf("{");
+
+      // Replace the content between the last { and cursor with the suggestion
+      const newText =
+        beforeCursor.substring(0, lastOpenBrace) +
+        "{" +
+        suggestion +
+        "}" +
+        afterCursor;
+
+      textarea.value = newText;
+      hideSuggestions();
+
+      // Set cursor position after the closing brace
+      const newPosition = lastOpenBrace + suggestion.length + 2; // +2 for the braces
+      textarea.setSelectionRange(newPosition, newPosition);
+      textarea.focus();
+    }
+
+    // Function to filter suggestions based on input
+    function filterSuggestions(input) {
+      if (!input) return placeholders; // Show all if no input
+      return placeholders.filter((placeholder) =>
+        placeholder.toLowerCase().includes(input.toLowerCase())
+      );
+    }
+
+    // Add event listener for keyboard input
+    textarea.addEventListener("input", (e) => {
+      lastCursorPosition = textarea.selectionStart;
+      const text = textarea.value;
+      const beforeCursor = text.substring(0, lastCursorPosition);
+
+      // Check if we've just typed an opening curly brace
+      if (beforeCursor.endsWith("{")) {
+        showSuggestions(placeholders);
+        currentBracketContent = "";
+        return;
+      }
+
+      // Find the last opening curly brace before cursor
+      const lastOpenBrace = beforeCursor.lastIndexOf("{");
+      if (lastOpenBrace === -1) {
+        hideSuggestions();
+        return;
+      }
+
+      // Check if we're inside curly braces
+      const lastCloseBrace = beforeCursor.lastIndexOf("}");
+      if (lastCloseBrace > lastOpenBrace) {
+        hideSuggestions();
+        return;
+      }
+
+      // Get the content inside the current open brackets
+      currentBracketContent = beforeCursor.substring(lastOpenBrace + 1);
+
+      // Filter and show suggestions
+      const filteredSuggestions = filterSuggestions(currentBracketContent);
+      if (filteredSuggestions.length > 0) {
+        showSuggestions(filteredSuggestions);
+      } else {
+        hideSuggestions();
+      }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        !textarea.contains(e.target) &&
+        !suggestionsContainer.contains(e.target)
+      ) {
+        hideSuggestions();
+      }
+    });
+
+    // Handle keyboard navigation
+    textarea.addEventListener("keydown", (e) => {
+      if (suggestionsContainer.classList.contains("hidden")) return;
+
+      const suggestions =
+        suggestionsContainer.querySelectorAll(".suggestion-item");
+      const activeItem = suggestionsContainer.querySelector(".bg-gray-100");
+      let activeIndex = Array.from(suggestions).indexOf(activeItem);
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          if (activeIndex < suggestions.length - 1) {
+            if (activeItem) activeItem.classList.remove("bg-gray-100");
+            suggestions[activeIndex + 1].classList.add("bg-gray-100");
+            suggestions[activeIndex + 1].scrollIntoView({ block: "nearest" });
+          }
+          break;
+
+        case "ArrowUp":
+          e.preventDefault();
+          if (activeIndex > 0) {
+            if (activeItem) activeItem.classList.remove("bg-gray-100");
+            suggestions[activeIndex - 1].classList.add("bg-gray-100");
+            suggestions[activeIndex - 1].scrollIntoView({ block: "nearest" });
+          }
+          break;
+
+        case "Enter":
+          if (activeItem) {
+            e.preventDefault();
+            selectSuggestion(activeItem.textContent.trim());
+          }
+          break;
+
+        case "Escape":
+          hideSuggestions();
+          break;
+      }
+    });
+
+    // INTEGRATION FUNCTIONS
+    // Integration configurations
+const Integrations = {
+  Hyper: {
+    name: "Hyper",
+    functions: [
+      {
+        name: "Linkedin data finder",
+        SheetInputs: ["Website"],
+        FormInputs: ["Title"]
+      }
+    ]
+  },
+  Datagma: {
+    name: "Datagma",
+    functions: [] // Add Datagma functions when available
+  }
+};
+
+// Add these event listeners to your setupEventListeners function
+function setupIntegrationListeners() {
+  // Provider selection change handler
+  document
+    .getElementById("integration-provider")
+    ?.addEventListener("change", function() {
+      const functionSelect = document.getElementById("integration-function");
+      const functionContainer = document.getElementById("function-select-container");
+      const inputsContainer = document.getElementById("function-inputs-container");
+      
+      // Reset and hide function inputs
+      inputsContainer.classList.add("hidden");
+      
+      if (this.value) {
+        // Update function options
+        const provider = Integrations[this.value];
+        functionSelect.innerHTML = `
+          <option value="">-- Select Function --</option>
+          ${provider.functions.map(func => 
+            `<option value="${func.name}">${func.name}</option>`
+          ).join('')}
+        `;
+        
+        // Show function selection
+        functionContainer.classList.remove("hidden");
+      } else {
+        functionContainer.classList.add("hidden");
+      }
+    });
+
+  // Function selection change handler
+  document
+    .getElementById("integration-function")
+    ?.addEventListener("change", function() {
+      const inputsContainer = document.getElementById("function-inputs-container");
+      const sheetInputsFields = document.getElementById("sheet-inputs-fields");
+      const formInputsFields = document.getElementById("form-inputs-fields");
+      
+      if (this.value) {
+        const provider = document.getElementById("integration-provider").value;
+        const selectedFunction = Integrations[provider].functions
+          .find(f => f.name === this.value);
+        
+        // Generate Sheet Inputs
+        sheetInputsFields.innerHTML = selectedFunction.SheetInputs
+          .map(input => `
+            <div class="space-y-1.5">
+              <label class="block text-xs text-gray-600">${input}</label>
+              <input type="text" 
+                class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                placeholder="Enter column reference"
+                data-sheet-input="${input}"
+                required
+              />
+            </div>
+          `).join('');
+        
+        // Generate Form Inputs
+        formInputsFields.innerHTML = selectedFunction.FormInputs
+          .map(input => `
+            <div class="space-y-1.5">
+              <input type="text" 
+                class="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                placeholder="Enter ${input}"
+                data-form-input="${input}"
+                required
+              />
+            </div>
+          `).join('');
+        
+        inputsContainer.classList.remove("hidden");
+      } else {
+        inputsContainer.classList.add("hidden");
+      }
+    });
+
+  // Generate button click handler
+  document
+    .getElementById("integration-generate-button")
+    ?.addEventListener("click", function() {
+      const provider = document.getElementById("integration-provider").value;
+      const selectedFunction = document.getElementById("integration-function").value;
+      const startRow = document.getElementById("integration-start-row").value;
+      const endRow = document.getElementById("integration-end-row").value;
+      
+      // Collect sheet inputs
+      const sheetInputs = {};
+      document.querySelectorAll('[data-sheet-input]').forEach(input => {
+        sheetInputs[input.dataset.sheetInput] = input.value;
+      });
+      
+      // Collect form inputs
+      const formInputs = {};
+      document.querySelectorAll('[data-form-input]').forEach(input => {
+        formInputs[input.dataset.formInput] = input.value;
+      });
+      
+      // Validate required fields
+      if (!provider || !selectedFunction || !startRow || !sheetInputs.Website || !formInputs.Title) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      // Show collected data
+      alert(
+        `Selected Function: ${selectedFunction}\n` +
+        `Website Column: ${sheetInputs.Website}\n` +
+        `Title: ${formInputs.Title}\n` +
+        `Start Row: ${startRow}\n` +
+        `End Row: ${endRow || 'Not specified'}`
+      );
+    });
+}
+  </script>
+
+</body>
+</html>
